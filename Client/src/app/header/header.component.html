@@ -1,0 +1,97 @@
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+          <!-- Logo on the left corner -->
+          <a class="navbar-brand" href="#">
+            <img src="your-logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-top">
+            Your Chat App
+          </a>
+    
+          <!-- Slogan in the middle -->
+          <div class="navbar-text mx-auto">
+            <strong>Let's Chat</strong>
+          </div>
+    
+          <!-- Toggle button for right side buttons on smaller screens -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarButtons" aria-controls="navbarButtons" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <!-- Right side buttons -->
+          <div class="collapse navbar-collapse" id="navbarButtons">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="fetchUsers()">Friends</button>
+              </li>
+              <li class="nav-item">
+                <button class="btn btn-outline-light nav-link">Online</button>
+              </li>
+              <li class="nav-item" *ngIf="loginStatus">
+                <button class="btn btn-outline-light nav-link" (click)="logOut()">LogOut</button>
+              </li>
+              <li class="nav-item" *ngIf="!loginStatus">
+                <button class="btn btn-outline-light nav-link " routerLink="/login">Login</button>
+              </li>
+              <li class="nav-item" *ngIf="!loginStatus">
+                <button class="btn btn-outline-light nav-link" routerLink="/sign-up">SignUp</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+</div>
+
+<div class="modal-dialog modal-xl">...</div>
+
+<!-- //Modal for users list -->
+
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Launch static backdrop modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Friends</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-center ">
+
+        <table class="table w-50 table-striped">
+          <thead>
+            <tr>
+              <!-- <th scope="col">#</th> -->
+              <th scope="col">Name</th>
+              <th scope="col">Status</th>
+              <th scope="col">Message</th>
+
+              
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of UsersList">
+              <!-- <th scope="row">1</th> -->
+              <td class="p-3">{{user.username}}</td>
+              <td class=" p-3">
+              <img *ngIf="user.online"  src="../../assets/online.png" alt="">
+              <img *ngIf="!user.online" src="../../assets/icons8-offline-50.png" alt="">
+
+              </td>
+             <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openChatDialog(user)">Send Message</button></td>
+            </tr>
+            
+          </tbody>
+        </table>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
