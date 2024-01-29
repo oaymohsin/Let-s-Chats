@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +29,8 @@ import { config } from 'rxjs';
 import { ChatDialogComponent } from './chat-dialog/chat-dialog.component';
 import { SocketService } from './Services/socket.service';
 import { UsersService } from './Services/users.service';
+import { CreateGroupComponent } from './create-group/create-group.component';
+import { MatSelectModule } from '@angular/material/select';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +42,7 @@ import { UsersService } from './Services/users.service';
     OnlineUsersComponent,
     HomeComponent,
     ChatDialogComponent,
+    CreateGroupComponent,
     
   ],
   imports: [
@@ -57,6 +61,7 @@ import { UsersService } from './Services/users.service';
     MatPaginatorModule,
     DragDropModule,
     MatDialogModule,
+    MatSelectModule,
     SocketIoModule.forRoot({ url: 'http://localhost:3050' })
 
   ],

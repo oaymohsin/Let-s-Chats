@@ -82,5 +82,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.socketService.connectToUser(user._id);
   }
   
-  
+  createGroup(){
+  }
 }

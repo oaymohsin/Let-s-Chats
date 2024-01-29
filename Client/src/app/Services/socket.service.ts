@@ -20,6 +20,9 @@ export class SocketService {
     // this.openChatDialog('65aa96cef55a55e7b1d18f97');
   }
 
+  getUsersList(){
+    return this.userList
+  }
   fetchAllUsers() {
     this.HttpClient.get('http://localhost:3050/api/user/getUsers').subscribe(
       (users: any) => {
@@ -27,7 +30,7 @@ export class SocketService {
         this.userList.push(element);
           
         });
-        // console.log(this.userList)
+        console.log(this.userList)
         // this.openChatDialog('65aa96cef55a55e7b1d18f97');
       }
     );
@@ -130,5 +133,14 @@ return {
   timeNow:formattedTime
 }
 
+  }
+
+  createGroup(groupName:string,createdBy:string,members:any){
+    const data={
+      groupName:groupName,
+      createdBy:createdBy,
+      members:members
+    }
+  return this.HttpClient.post('http://localhost:3050/api/groups/createGroup',data);
   }
 }

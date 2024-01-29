@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const userRoutes = require("./Routes/userRoutes");
 const messageRoutes=require("./Routes/messageRoutes")
-
+const groupRoutes=require('./Routes/groupRoutes')
 const app = express();
 app.use(cors());
 
@@ -14,6 +14,7 @@ const MONGO_URI =
   process.env.MONGO_ATLAS_PW +
   "@cluster0.epwsfar.mongodb.net/LetsChat";
 
+  //  mongodb+srv://mohsinmaken3:76510063Msn@cluster0.epwsfar.mongodb.net/LetsChat"
 mongoose
   .connect(MONGO_URI)
   .then(() => {
@@ -43,5 +44,6 @@ app.use((req, res, next) => {
 
 app.use("/api/user", userRoutes);
 app.use("/api/messages",messageRoutes)
+app.use("/api/groups",groupRoutes)
 
 module.exports = app;

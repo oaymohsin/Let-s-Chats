@@ -24,6 +24,12 @@
                 <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="fetchUsers()">Friends</button>
               </li>
               <li class="nav-item">
+                <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="fetchUsers()">My Groups</button>
+              </li>
+              <li class="nav-item">
+                <button class="btn btn-outline-light nav-link" routerLink="/create-group" >Create Group</button>"
+              </li>
+              <li class="nav-item">
                 <button class="btn btn-outline-light nav-link">Online</button>
               </li>
               <li class="nav-item" *ngIf="loginStatus">
@@ -41,7 +47,7 @@
       </nav>
 </div>
 
-<div class="modal-dialog modal-xl">...</div>
+<!-- <div class="modal-dialog modal-xl">...</div> -->
 
 <!-- //Modal for users list -->
 
