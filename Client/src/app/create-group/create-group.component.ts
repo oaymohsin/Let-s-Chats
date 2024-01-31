@@ -50,6 +50,8 @@ createGroup(){
 
   this.socketService.createGroup(groupData.groupName,groupData.createdBy,groupData.members).subscribe((data:any)=>{
     console.log(data)
+    // sending group members as extra data with this emitter
+    this.socketService.joinGroup(data.data._id,data.data.members)
   })
   // console.log(groupData)
 }

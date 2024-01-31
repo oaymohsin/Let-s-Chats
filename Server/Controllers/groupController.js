@@ -3,6 +3,7 @@ const groupModel = require("../Models/groupModel");
 const Socket=require('../socket')
 const {connectedUsers}=require('../Middleware/connectedUsers')
 
+const io= Socket()
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -13,17 +14,17 @@ exports.createGroup = async (req, res, next) => {
     });
     await groupData.save().then((data) => {
       
-      console.log(`connected user object from socket.js ${connectedUsers['65abf445b4dcd0bd0f31d11b']}`)
-      console.log(`data members ${data.members}`)
+      // console.log(`connected user object from socket.js ${connectedUsers['65abf445b4dcd0bd0f31d11b']}`)
+      // console.log(`data members ${data.members}`)
       
       data.members.forEach(element => {
         if(connectedUsers[element]){
           const memberSocketId=connectedUsers[element];
-          console.log(`for this element ${element} it socket id is ${memberSocketId}`)
-          console.log(data._id)
+          // console.log(`for this element ${element} it socket id is ${memberSocketId}`)
+          // console.log(data._id)
           
-            Socket.to(memberSocketId).emit('joinGroup', data._id);
-            console.log("'joinGroup' event emitted successfully");
+            // io.to(memberSocketId).emit('joinGroup', data._id);
+            // console.log("'joinGroup' event emitted successfully");
          
          
 

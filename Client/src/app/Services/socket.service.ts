@@ -65,6 +65,16 @@ export class SocketService {
     this.socket.emit('connectToUser', userId);
   }
 
+  joinGroup(groupId:string,groupMembers:any){
+    this.socket.emit('getGroups', { groupId: groupId, groupMembers: groupMembers }, (membersSocketIds:any) => {
+      console.log('Received membersSocketIds from server:', membersSocketIds);
+      // Do something with the received data on the client side
+      membersSocketIds.forEach((socketId: any) => {
+        this.socket.emit('joinGroup', { groupId: groupId, targetSocketId: socketId });
+      })
+    });
+    
+  }
   sendMessageToUser(targetUserId: string, message: string): void {
     this.socket.emit('sendMessageToUser', { targetUserId, message });
   }

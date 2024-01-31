@@ -2,8 +2,9 @@ const socketIO = require("socket.io");
 const jwt = require("jsonwebtoken");
 const userModel = require("./Models/userModel");
 const messageModel= require("./Models/messageModel")
-const {connectedUsers} = require("./Middleware/connectedUsers")
+// const {connectedUsers} = require("./Middleware/connectedUsers")
 
+const connectedUsers={}
 module.exports = (server) => {
   // const io = socketIO(server);
   const io = socketIO(server, {
@@ -88,12 +89,37 @@ module.exports = (server) => {
         console.log(`User ${targetUserId} is not online.`);
         // Handle offline user scenarios here (e.g., store messages in a database)
       }
+      
     });
 
-    socket.on('joinGroup', (groupId) => {
-      socket.join(groupId);
-      console.log(`User ${socket.user.username} joined group ${groupId}`);
+    socket.on('getGroups', (data, callback) => {
+      membersSocketIds = [];
+      const groupMembers = [...data.groupMembers];
+    
+      groupMembers.forEach(element => {
+        if (connectedUsers[element]) {
+          const memberSocketId = connectedUsers[element];
+          membersSocketIds.push(memberSocketId);
+          io.to(memberSocketId).emit('joinGroup', data.groupId);
+          console.log(`User socket ${memberSocketId} id fetched`);
+        }
+      });
+    
+      // Use the callback to send data back to the client
+      callback(membersSocketIds);
     });
+    
+
+    socket.on('joinGroup', (data) => {
+      const targetSocketId = data.targetSocketId;
+      const groupId = data.groupId;
+    
+      // Use io.to(targetSocketId).emit to send a message to a specific socket
+      io.to(targetSocketId).emit('joinGroup', groupId);
+      console.log(`User ${targetSocketId} joined group ${groupId}`);
+    });
+  
+
     socket.on("disconnect", () => {
       // Handle disconnection and update connectedUsers if needed
       try {
@@ -111,6 +137,7 @@ module.exports = (server) => {
       console.log(`User with socket id ${socket.id} disconnected`);
     });
   });
+  return io;
 };
 // module.exports=connectedUsers;
 
