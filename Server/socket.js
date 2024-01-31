@@ -2,6 +2,7 @@ const socketIO = require("socket.io");
 const jwt = require("jsonwebtoken");
 const userModel = require("./Models/userModel");
 const messageModel= require("./Models/messageModel")
+const {connectedUsers} = require("./Middleware/connectedUsers")
 
 module.exports = (server) => {
   // const io = socketIO(server);
@@ -12,7 +13,6 @@ module.exports = (server) => {
       methods: ["GET", "POST"], // Add other allowed methods if necessary
     },
   });
-  const connectedUsers = {}; // To store socket IDs of connected users
 
   io.use(async (socket, next) => {
     try {
@@ -90,6 +90,10 @@ module.exports = (server) => {
       }
     });
 
+    socket.on('joinGroup', (groupId) => {
+      socket.join(groupId);
+      console.log(`User ${socket.user.username} joined group ${groupId}`);
+    });
     socket.on("disconnect", () => {
       // Handle disconnection and update connectedUsers if needed
       try {
@@ -108,5 +112,6 @@ module.exports = (server) => {
     });
   });
 };
+// module.exports=connectedUsers;
 
 

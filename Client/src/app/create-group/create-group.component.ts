@@ -48,7 +48,7 @@ createGroup(){
     members:membersId
   }
 
-  this.socketService.createGroup(groupData.groupName,groupData.createdBy,this.groupform.value.members).subscribe((data:any)=>{
+  this.socketService.createGroup(groupData.groupName,groupData.createdBy,groupData.members).subscribe((data:any)=>{
     console.log(data)
   })
   // console.log(groupData)

@@ -1,10 +1,10 @@
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row justify-content-center">
       <div class="col-md-6 ">
         <div class="card" >
           <div class="card-header bg-primary text-white">
-            <h3 class="text-center">Create New Group</h3>
+            <h1 class="text-center">Create New Group</h1>
           </div>
           <div class="card-body">
             <form (ngSubmit)="createGroup()" [formGroup]="groupform"  class="m-5 d-flex flex-column justify-content-center align-items-center">
@@ -29,7 +29,7 @@
                     <!-- <label for="password" class="form-label">Add Members  </label>&nbsp; &nbsp; &nbsp; &nbsp;  -->
                     
                     <mat-form-field class="w-100" >
-                      <mat-label>Select Users</mat-label>
+                      <mat-label>Add Members</mat-label>
                       <mat-select formControlName="members" multiple>
                         <mat-option *ngFor="let user of UsersList" [value]="user">{{user.username}}</mat-option>
                       </mat-select>
