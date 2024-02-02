@@ -128,6 +128,8 @@
               </td> -->
              <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Group Chat</button></td>
              <td><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Leave Group</button></td>
+             <td *ngIf="group.createdBy==myId"><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Delete Group</button></td>
+
 
             </tr>
             

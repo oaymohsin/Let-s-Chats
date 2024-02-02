@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   UsersList: any = [];
   openedDialogList:any=[]
   myGroups:any=[]  
+  myId:any;
   constructor(private userService: UsersService,
      private dialog: MatDialog,
      private socketService:SocketService) {}
@@ -88,6 +89,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   fetchGroups(){
     const myId=localStorage.getItem('userId')
+    this.myId=myId;
     this.userService.fetchMyGroups(myId).subscribe((result:any)=>{
       this.myGroups=result.data;
       console.log(this.myGroups)
