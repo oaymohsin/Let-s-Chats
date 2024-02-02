@@ -4,4 +4,7 @@ const router=express.Router()
 
 router.post('/createGroup',groupController.createGroup)
 
+router.get('/getGroupsById/:id',groupController.getGroupsById)
+
+
 module.exports=router

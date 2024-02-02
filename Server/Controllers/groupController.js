@@ -59,3 +59,40 @@ exports.getAllGroups = async (req, res, next) => {
   }
 };
 
+exports.getGroupsById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    // we use $in if we want to search in the array of mongodb object 
+    groupModel.find({ members: { $in: [id] } })
+      .then(data => {
+        if (data.length > 0) {
+          res.status(200).json({
+            data: data,
+            result: true
+          });
+        } else {
+          res.status(404).json({
+            message: "This user has no groups",
+            data: null,
+            result: false
+          });
+        }
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: "Internal Server Error",
+          data: null,
+          result: false,
+          error: error.message
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      data: null,
+      result: false
+    });
+  }
+};
+
+

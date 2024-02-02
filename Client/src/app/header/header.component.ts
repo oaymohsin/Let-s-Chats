@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authListenerSubs: Subscription | any;
   UsersList: any = [];
   openedDialogList:any=[]
+  myGroups:any=[]  
   constructor(private userService: UsersService,
      private dialog: MatDialog,
      private socketService:SocketService) {}
@@ -84,4 +85,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   createGroup(){
   }
+
+  fetchGroups(){
+    const myId=localStorage.getItem('userId')
+    this.userService.fetchMyGroups(myId).subscribe((result:any)=>{
+      this.myGroups=result.data;
+      console.log(this.myGroups)
+    })
+  }
+  openGroupDialog(group:any){}
 }

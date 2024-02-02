@@ -121,5 +121,8 @@ export class UsersService {
     return this.HttpClient.get('http://localhost:3050/api/user/getUsers');
   }
 
+  fetchMyGroups(id:any){
+    return this.HttpClient.get('http://localhost:3050/api/groups/getGroupsById/'+ id)
+  }
   
 }

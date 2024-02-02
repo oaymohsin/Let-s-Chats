@@ -24,7 +24,7 @@
                 <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="fetchUsers()">Friends</button>
               </li>
               <li class="nav-item">
-                <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="fetchUsers()">My Groups</button>
+                <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#groupStaticBackdrop" (click)="fetchGroups()">My Groups</button>
               </li>
               <li class="nav-item">
                 <button class="btn btn-outline-light nav-link" routerLink="/create-group" >Create Group</button>
@@ -47,14 +47,7 @@
       </nav>
 </div>
 
-<!-- <div class="modal-dialog modal-xl">...</div> -->
-
-<!-- //Modal for users list -->
-
-<!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Launch static backdrop modal
-</button> -->
+<!-- Modal for Users List -->
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -87,6 +80,55 @@
 
               </td>
              <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openChatDialog(user)">Send Message</button></td>
+            </tr>
+            
+          </tbody>
+        </table>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for list all groups -->
+
+<div class="modal fade" id="groupStaticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Groups</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-center "  style="max-height: 800px; overflow-y: auto;">
+
+        <table class="table w-50 table-striped" >
+          <thead>
+            <tr>
+              <!-- <th scope="col">#</th> -->
+              <th scope="col">Name</th>
+              
+
+              
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let group of myGroups">
+              <!-- <th scope="row">1</th> -->
+              <td class="p-3">{{group.groupName}}</td>
+              <!-- <td class=" p-3">
+              <img *ngIf="user.online"  src="../../assets/online.png" alt="">
+              <img *ngIf="!user.online" src="../../assets/icons8-offline-50.png" alt="">
+
+              </td> -->
+             <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Group Chat</button></td>
+             <td><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Leave Group</button></td>
+
             </tr>
             
           </tbody>

@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../Models/userModel");
+const groupModel= require("../Models/groupModel")
 const jwt = require("jsonwebtoken");
 const { response } = require("../app");
 
@@ -20,6 +21,7 @@ exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         res.status(500).json({
+
           error: err.message,
         });
       });
@@ -90,3 +92,4 @@ exports.getUsers = async(req, res,next)=>{
     })
   }
 }
+
