@@ -24,6 +24,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
 import { SocketIoModule } from 'ngx-socket-io';
 import { config } from 'rxjs';
 import { ChatDialogComponent } from './chat-dialog/chat-dialog.component';
@@ -64,6 +66,8 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
     DragDropModule,
     MatDialogModule,
     MatSelectModule,
+    MatIconModule,
+    MatMenuModule,
     SocketIoModule.forRoot({ url: 'http://localhost:3050' })
 
   ],
