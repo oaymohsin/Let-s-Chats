@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ChatDialogComponent } from '../chat-dialog/chat-dialog.component';
 import { SocketService } from '../Services/socket.service';
+import { GroupChatDialogComponent } from '../group-chat-dialog/group-chat-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authListenerSubs: Subscription | any;
   UsersList: any = [];
   openedDialogList:any=[]
+  openedGroupDialogList:any=[]
   myGroups:any=[]  
   myId:any;
   constructor(private userService: UsersService,
@@ -95,5 +97,34 @@ export class HeaderComponent implements OnInit, OnDestroy {
       console.log(this.myGroups)
     })
   }
-  openGroupDialog(group:any){}
+  openGroupDialog(groupData:any){
+    const dialogPosition = { bottom: '170px', right: '20px' };
+  
+    if (this.openedGroupDialogList.length > 0) {
+      // Calculate the total horizontal offset based on existing dialogs
+      let totalOffset = 0;
+      for (let i = 0; i < this.openedGroupDialogList.length; i++) {
+        totalOffset += 560; // Adjust based on dialog width and spacing
+      }
+      dialogPosition.right = `${totalOffset}px`;
+    }
+  
+    const dialogRef = this.dialog.open(GroupChatDialogComponent, {
+      disableClose: true,
+      width: '500', // Adjust as needed
+      position: dialogPosition,
+      hasBackdrop: false,
+      data: { groupData },
+    });
+  
+    this.openedGroupDialogList.push(groupData._id);
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog Result: ${result}`);
+      this.openedDialogList = this.openedDialogList.filter((id: any) => id !==groupData._id);
+    });
+  
+    // this.socketService.connectToUser(user._id);
+
+  }
 }

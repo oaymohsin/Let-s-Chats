@@ -31,6 +31,7 @@ import { SocketService } from './Services/socket.service';
 import { UsersService } from './Services/users.service';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { MatSelectModule } from '@angular/material/select';
+import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,6 +44,7 @@ import { MatSelectModule } from '@angular/material/select';
     HomeComponent,
     ChatDialogComponent,
     CreateGroupComponent,
+    GroupChatDialogComponent,
     
   ],
   imports: [
