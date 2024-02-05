@@ -12,16 +12,32 @@ export class GroupChatDialogComponent implements OnInit {
   group:any;
   message: any;
   chatMessages:any=[]
-
+  myId:any;
+  groupMemberButton:any=false;
+  myUserDataObject:any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data:{groupData:any},
     private SocketService:SocketService
   ){
     this.group=data.groupData;
+    const userId=localStorage.getItem('userId')
+    const groupMembers= this.group.members;
+    groupMembers.forEach((member:any) => {
+      if(member._id==userId){
+        this.myUserDataObject=member;
+      }
+    });
   }
 
   ngOnInit(): void {
-    
+    this.myId=localStorage.getItem('userId')
+
+    this.SocketService.receiveMessageFromGroup().subscribe((data:any)=>{
+      if(data.groupId==this.group._id){
+        this.chatMessages.push({ type: 'received', message: data.message, person: data.sender });
+        this.playReceivedMessageTone();
+      }
+    })
   }
 
 
@@ -45,5 +61,12 @@ export class GroupChatDialogComponent implements OnInit {
     }
   }
 
-  sendMessage(message:any, groupId:any){}
+  showGroupMembers(){
+    this.groupMemberButton=true;
+  }
+
+  sendMessage(message:any, groupId:any){
+    this.chatMessages.push({ type: 'sent', message: this.message, person:this.myUserDataObject.username }); 
+    this.SocketService.sendMessageToGroup(groupId, message);
+  }
 }

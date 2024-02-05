@@ -1,13 +1,13 @@
 <!-- chat-dialog.component.html -->
 <div class="container">
-    <h2 mat-dialog-title class="bg-primary w-100 text-white m-0">
+    <h2 mat-dialog-title class="bg-primary w-100 text-white m-0" *ngIf="!groupMemberButton">
       Chatting with {{ group.groupName }}
 
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item data-bs-toggle="modal" data-bs-target="#memberstaticBackdrop">
+        <button mat-menu-item (click)="showGroupMembers()">
           <i class="fa fa-users" aria-hidden="true"></i>
           <span> &nbsp; Group Members</span>
         </button>
@@ -25,7 +25,39 @@
 
     </h2>
 
+    <h2 mat-dialog-title class="bg-primary w-100 text-white m-0" *ngIf="groupMemberButton">
+      <i class="fa fa-arrow-left" aria-hidden="true" (click)="groupMemberButton=false"></i>
+    </h2>
+
    
+    <div class="rowData" *ngIf="groupMemberButton">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <!-- <th scope="col">#</th> -->
+            <th scope="col">Name</th>
+            <th scope="col">Remove Member</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of group.members">
+            <!-- <th scope="row">1</th> -->
+            <td>{{member.username}}
+              <span *ngIf="group.createdBy==member._id" class=" admin-badge ">
+                Admin
+              </span>
+            </td>
+            <td><button class="btn btn-danger btn-sm rm-member-button">Remove</button></td>
+            <!-- <td>@mdo</td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+
+
     
     <mat-dialog-content class="mat-typography">
       <!-- Add your chat UI components here  -->
@@ -39,21 +71,30 @@
           {{ Message.message }}
         </div>
       </div> -->
-  
-      <div class="goup-chat-container">
-        <div  *ngFor="let chatMessage of chatMessages" class="{{ chatMessage.type }}-message">
-         <h3 class="message"> {{ chatMessage.message }} <br> </h3>
-          <p>{{chatMessage.Date}}  <span>{{chatMessage.Time}}</span></p>
+      <div class="chatUi" *ngIf="!groupMemberButton">
+        <div class="goup-chat-container">
+
+         <div  *ngFor="let chatMessage of chatMessages" class="{{ chatMessage.type }}-message">
+            <h3 class="message"> {{ chatMessage.message }} <br> </h3>
+            <p>{{chatMessage.Date}}  <span>{{chatMessage.Time}}</span></p>
+            <p>{{chatMessage.person}}</p>
+          </div>
         </div>
-      </div>
   
-      <textarea
-        [(ngModel)]="message"
-        placeholder="Type your message..."
-      ></textarea>
-      <button (click)="sendMessage(message, group._id)" class="btn btn-success">
-        Send
-      </button>
+        <textarea
+          [(ngModel)]="message"
+          placeholder="Type your message..."
+        ></textarea>
+        <button (click)="sendMessage(message, group._id)" class="btn btn-success">
+         Send
+        </button>
+
+      </div>
+
+    
+
+
+
     </mat-dialog-content>
   </div>
   <mat-dialog-actions align="end">
@@ -67,52 +108,8 @@
     Your browser does not support the audio element.
   </audio>
   
+
+
   
-  <!-- Modal for Users List -->
 
-<!-- Modal -->
-<div class="modal fade" id="memberstaticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Friends</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body d-flex justify-content-center ">
-
-        <table class="table w-50 table-striped">
-          <thead>
-            <tr>
-              <!-- <th scope="col">#</th> -->
-              <th scope="col">Name</th>
-              <th scope="col">Status</th>
-              <th scope="col">Message</th>
-
-              
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let member of group.members index as i">
-              <!-- <th scope="row">1</th> -->
-              <td class="p-3">{{member[i]}}</td>
-              <!-- <td class=" p-3">
-              <img *ngIf="user.online"  src="../../assets/online.png" alt="">
-              <img *ngIf="!user.online" src="../../assets/icons8-offline-50.png" alt="">
-
-              </td> -->
-             <!-- <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openChatDialog(user)">Send Message</button></td> -->
-            </tr>
-            
-          </tbody>
-        </table>
-
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div>
   

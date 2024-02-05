@@ -153,4 +153,27 @@ return {
     }
   return this.HttpClient.post('http://localhost:3050/api/groups/createGroup',data);
   }
+
+  sendMessageToGroup(groupId:any, message:any){
+    this.socket.emit('sendMessageToGroup', { groupId, message });
+  }
+
+  // receiveMessageFromGroup(){
+
+  //   this.socket.on('receiveMessageFromGroup', (data:any) => {
+  //     const sender = data.sender;
+  //     const message = data.message;
+  
+  //     // Handle the incoming group message, e.g., display it in the UI
+  //     console.log(`Received message in group ${sender}: ${message}`);
+  //   });
+  // }
+
+  receiveMessageFromGroup(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('receiveMessageFromGroup', (data: any) => {
+        observer.next(data);
+      });
+    });
+  }
 }

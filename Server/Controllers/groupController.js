@@ -12,11 +12,13 @@ exports.createGroup = async (req, res, next) => {
       createdBy: req.body.createdBy,
       members: req.body.members,
     });
-    await groupData.save().then((data) => {
+    await groupData.save().then(async (data) => {
       
       // console.log(`connected user object from socket.js ${connectedUsers['65abf445b4dcd0bd0f31d11b']}`)
       // console.log(`data members ${data.members}`)
-      
+      const populatedGroup = await groupModel.populate(data, { path: 'members' });
+
+
       data.members.forEach(element => {
         if(connectedUsers[element]){
           const memberSocketId=connectedUsers[element];
@@ -32,7 +34,7 @@ exports.createGroup = async (req, res, next) => {
       });
       res.status(201).json({
         message: "Group Created Successfully",
-        data: data,
+        data: populatedGroup
       });
     });
   } catch (error) {
@@ -64,10 +66,11 @@ exports.getGroupsById = async (req, res, next) => {
     const id = req.params.id;
     // we use $in if we want to search in the array of mongodb object 
     groupModel.find({ members: { $in: [id] } })
-      .then(data => {
+      .then(async data => {
+        const populatedGroup = await groupModel.populate(data, { path: 'members' });
         if (data.length > 0) {
           res.status(200).json({
-            data: data,
+            data: populatedGroup,
             result: true
           });
         } else {

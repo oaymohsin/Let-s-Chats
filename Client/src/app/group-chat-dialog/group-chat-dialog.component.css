@@ -3,6 +3,7 @@
     padding: 0%;
     height: 700px;
     width: 500px;
+    overflow: hidden;
   }
   
   mat-dialog-content {
@@ -87,4 +88,30 @@
     overflow-wrap: break-word;
     align-self: flex-start;
   
+  }
+
+  .admin-badge{
+    background-color: rgb(16, 124, 16);
+    font-size: xx-small;
+    color: white;
+    padding: 3px 5px;
+    border-radius: 5px;
+    margin-left: 5px
+  }
+
+  .rm-member-button{
+    font-size: small;
+    padding: 3px 5px;
+    border-radius: 5px;
+  }
+
+  .rowData{
+    margin-top: 20px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+
+  .fa-arrow-left:hover{
+    cursor: pointer;
+    color: aqua;
   }

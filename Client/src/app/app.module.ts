@@ -26,6 +26,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatBadgeModule} from '@angular/material/badge';
+
 import { SocketIoModule } from 'ngx-socket-io';
 import { config } from 'rxjs';
 import { ChatDialogComponent } from './chat-dialog/chat-dialog.component';
@@ -68,6 +70,7 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
     MatSelectModule,
     MatIconModule,
     MatMenuModule,
+    MatBadgeModule,
     SocketIoModule.forRoot({ url: 'http://localhost:3050' })
 
   ],

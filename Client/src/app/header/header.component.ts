@@ -98,6 +98,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
   }
   openGroupDialog(groupData:any){
+
+    console.log(groupData)
     const dialogPosition = { bottom: '170px', right: '20px' };
   
     if (this.openedGroupDialogList.length > 0) {
