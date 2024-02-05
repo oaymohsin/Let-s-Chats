@@ -115,7 +115,8 @@ module.exports = (server) => {
         if (connectedUsers[member]) {
           const memberSocketId = connectedUsers[member];
           io.to(memberSocketId).emit('receiveMessageFromGroup', {
-            sender: socket.user.username,
+            senderId: socket.user._id,
+            sendername: socket.user.username,
             groupId:groupId,
             message: message,
           });

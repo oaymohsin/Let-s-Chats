@@ -33,8 +33,8 @@ export class GroupChatDialogComponent implements OnInit {
     this.myId=localStorage.getItem('userId')
 
     this.SocketService.receiveMessageFromGroup().subscribe((data:any)=>{
-      if(data.groupId==this.group._id){
-        this.chatMessages.push({ type: 'received', message: data.message, person: data.sender });
+      if(data.groupId==this.group._id && data.senderId!=this.myId){
+        this.chatMessages.push({ type: 'received', message: data.message, person: data.sendername });
         this.playReceivedMessageTone();
       }
     })
