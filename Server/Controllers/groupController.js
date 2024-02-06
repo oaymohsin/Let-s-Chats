@@ -98,4 +98,28 @@ exports.getGroupsById = async (req, res, next) => {
   }
 };
 
+exports.deleteGroup= async (req,res,next)=>{
+  try {
+    const groupId= req.params.id;
+    await groupModel.deleteOne({ _id: groupId }).then((result) => {
+      // console.log(result)
+      if (result.deletedCount > 0) {
+        res.status(200).json({ 
+          message: "Deleted successfully!",
+          result:true
+      
+      });
+      } else {
+        res.status(401).json({ message: "Not deleted",
+        result:false });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      result:false
+    })
+  }
+}
+
 

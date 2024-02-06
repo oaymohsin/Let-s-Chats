@@ -112,7 +112,7 @@ module.exports = (server) => {
       const groupMembers = group.members;
 
       groupMembers.forEach((member) => {
-        if (connectedUsers[member]) {
+        if (connectedUsers.hasOwnProperty(member) && connectedUsers[member]) {
           const memberSocketId = connectedUsers[member];
           io.to(memberSocketId).emit('receiveMessageFromGroup', {
             senderId: socket.user._id,
@@ -123,7 +123,9 @@ module.exports = (server) => {
           console.log(`Message sent to group member ${member}` );
         }else {
             // Handle unauthorized attempts to send messages
-            console.log(`Unauthorized attempt to send message in group ${groupId}`);
+            // console.log(`Unauthorized attempt to send message in group ${groupId}`);
+            console.log(`this Member ${member} is not online `);
+
           }
       });
 

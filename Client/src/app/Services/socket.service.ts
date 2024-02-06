@@ -176,4 +176,10 @@ return {
       });
     });
   }
+
+  deleteGroup(groupId:any){
+    return this.HttpClient.delete(
+      `http://localhost:3050/api/groups/deleteGroup/${groupId}`
+    );
+  }
 }

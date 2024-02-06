@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -11,8 +11,9 @@ export class UsersService {
   private loginStatus = false;
   token: any = '';
   tokenTimer: any;
+  loggedUserId:any;
   private authStatusListener = new Subject<boolean>();
-
+  private loggedInUserId= new Subject<any>()
   constructor(
     private HttpClient: HttpClient,
     private socketService: SocketService,
@@ -21,6 +22,9 @@ export class UsersService {
 
   getloginStatus() {
     return this.loginStatus;
+  }
+  getloggedInUserId(){
+    return this.loggedInUserId.asObservable();
   }
   getauthStatusListener() {
     return this.authStatusListener.asObservable();
@@ -45,6 +49,9 @@ export class UsersService {
       'http://localhost:3050/api/user/login',
       data
     ).subscribe((response: any) => {
+      console.log(response.userId)
+      this.loggedInUserId.next(response.userId)
+      this.loggedUserId=response.userId;
       this.token = response.token;
       const expireInDuration = response.expiresIn;
       this.setAuthTimer(expireInDuration);

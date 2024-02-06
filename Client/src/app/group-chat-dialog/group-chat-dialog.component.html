@@ -17,7 +17,7 @@
           <span>&nbsp; Exit Group </span>
         </button>
 
-        <button mat-menu-item>
+        <button mat-menu-item *ngIf="group.createdBy===myId" (click)="deleteGroup(group._id)">
           <i class="fa fa-trash" aria-hidden="true"></i>
           <span>&nbsp; Delete Group </span>
         </button>
@@ -37,7 +37,8 @@
           <tr>
             <!-- <th scope="col">#</th> -->
             <th scope="col">Name</th>
-            <th scope="col">Remove Member</th>
+            <th scope="col" >Remove Member</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -48,7 +49,7 @@
                 Admin
               </span>
             </td>
-            <td><button class="btn btn-danger btn-sm rm-member-button">Remove</button></td>
+            <td *ngIf="group.createdBy===myId"><button class="btn btn-danger btn-sm rm-member-button">Remove</button></td>
             <!-- <td>@mdo</td> -->
           </tr>
         </tbody>

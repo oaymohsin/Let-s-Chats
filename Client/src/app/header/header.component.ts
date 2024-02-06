@@ -129,4 +129,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // this.socketService.connectToUser(user._id);
 
   }
+
+  deleteGroup(groupId:any){
+    this.socketService.deleteGroup(groupId).subscribe((data:any)=>{
+      console.log(data)
+      if(data.result==true){
+        // this.fetchGroups()
+      }
+    })
+  }
 }

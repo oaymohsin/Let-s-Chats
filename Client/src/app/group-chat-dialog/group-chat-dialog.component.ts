@@ -1,36 +1,56 @@
-import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SocketService } from '../Services/socket.service';
+import { UsersService } from '../Services/users.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-group-chat-dialog',
   templateUrl: './group-chat-dialog.component.html',
   styleUrls: ['./group-chat-dialog.component.css']
 })
-export class GroupChatDialogComponent implements OnInit {
+export class GroupChatDialogComponent implements OnInit,OnDestroy {
   @ViewChild('receivedMessageTone') receivedMessageTone: any;
   group:any;
   message: any;
   chatMessages:any=[]
   myId:any;
+  private loggedInUserListener: Subscription | any;
   groupMemberButton:any=false;
   myUserDataObject:any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data:{groupData:any},
-    private SocketService:SocketService
+    private SocketService:SocketService,
+    private userService:UsersService,
+    private matDialogRef:MatDialogRef<GroupChatDialogComponent>
   ){
     this.group=data.groupData;
+
+   
+    
+  }
+
+  ngOnInit(): void {
+
     const userId=localStorage.getItem('userId')
     const groupMembers= this.group.members;
     groupMembers.forEach((member:any) => {
+      console.log(member)
       if(member._id==userId){
         this.myUserDataObject=member;
       }
     });
-  }
+    // console.log(`ab dekho bhla ${this.userService.loggedUserId}`)
+    // this.myId=this.userService.loggedUserId
 
-  ngOnInit(): void {
+    //this oberservable is not working dont know why
+    this.loggedInUserListener=this.userService.getloggedInUserId().subscribe((id)=>{
+      // this.myId=id;
+      console.log(`My id is ${id}`)
+    })
+    
     this.myId=localStorage.getItem('userId')
+    console.log(this.myId)
 
     this.SocketService.receiveMessageFromGroup().subscribe((data:any)=>{
       if(data.groupId==this.group._id && data.senderId!=this.myId){
@@ -38,6 +58,10 @@ export class GroupChatDialogComponent implements OnInit {
         this.playReceivedMessageTone();
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.loggedInUserListener.unsubscribe();
   }
 
 
@@ -68,5 +92,14 @@ export class GroupChatDialogComponent implements OnInit {
   sendMessage(message:any, groupId:any){
     this.chatMessages.push({ type: 'sent', message: this.message, person:this.myUserDataObject.username }); 
     this.SocketService.sendMessageToGroup(groupId, message);
+  }
+
+  deleteGroup(groupId:any){
+    this.SocketService.deleteGroup(groupId).subscribe((data:any)=>{
+      console.log(data)
+      if(data.result==true){
+        this.matDialogRef.close()
+      }
+    })
   }
 }
