@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SocketService } from '../Services/socket.service';
 import { UsersService } from '../Services/users.service';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,8 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data:{groupData:any},
     private SocketService:SocketService,
     private userService:UsersService,
-    private matDialogRef:MatDialogRef<GroupChatDialogComponent>
+    private matDialogRef:MatDialogRef<GroupChatDialogComponent>,
+    private dialog:MatDialog
   ){
     this.group=data.groupData;
 
@@ -101,5 +102,20 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
         this.matDialogRef.close()
       }
     })
+  }
+
+  makeAdmin(memberId:any,groupId:any){
+    this.SocketService.makeGroupAdmin(groupId,memberId).subscribe((data:any)=>{
+      console.log(data.message)
+    })
+  }
+
+  removeAdmin(memberId:any,groupId:any){
+    this.SocketService.removeGroupAdmin(groupId,memberId).subscribe((data:any)=>{
+      console.log(data.message)
+    
+
+    })
+    // this.group=data.groupData;
   }
 }

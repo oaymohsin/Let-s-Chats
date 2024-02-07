@@ -11,12 +11,13 @@ exports.createGroup = async (req, res, next) => {
       groupName: req.body.groupName,
       createdBy: req.body.createdBy,
       members: req.body.members,
+      admins:req.body.createdBy
     });
     await groupData.save().then(async (data) => {
       
       // console.log(`connected user object from socket.js ${connectedUsers['65abf445b4dcd0bd0f31d11b']}`)
       // console.log(`data members ${data.members}`)
-      const populatedGroup = await groupModel.populate(data, { path: 'members' });
+      const populatedGroup = await groupModel.populate(data, [{path:'admins'},{ path: 'members' }]);
 
 
       data.members.forEach(element => {
@@ -44,6 +45,65 @@ exports.createGroup = async (req, res, next) => {
     });
   }
 };
+
+exports.makeGroupAdmin = async (req, res, next) => {
+  try {
+    const memberId = req.body.memberId;
+    const groupId = req.body.groupId;
+
+    const result = await groupModel.findOneAndUpdate(
+      { _id: groupId },
+      { $addToSet: { admins: memberId } }
+    );
+
+    if (result) {
+      res.status(200).json({ 
+        message: "Added successfully!",
+        result: true
+      });
+    } else {
+      res.status(200).json({ 
+        message: "Member is already an admin.",
+        result: false
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      result: false,
+    });
+  }
+};
+
+exports.removeGroupAdmin = async (req, res, next) => {
+  try {
+    const memberId = req.body.memberId;
+    const groupId = req.body.groupId;
+
+    const result = await groupModel.findOneAndUpdate(
+      { _id: groupId },
+      { $pull: { admins: memberId } }
+    );
+
+    if (result) {
+      res.status(200).json({ 
+        message: "Removed successfully!",
+        result: true
+      });
+    } else {
+      res.status(400).json({ 
+        message: "Member is not an admin.",
+        result: false
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      result: false,
+    });
+  }
+};
+
 
 exports.getAllGroups = async (req, res, next) => {
   try {

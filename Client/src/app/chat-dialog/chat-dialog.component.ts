@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SocketService } from '../Services/socket.service';
 
 @Component({
@@ -16,7 +16,9 @@ export class ChatDialogComponent implements OnInit {
   receivedMessages: any = [];
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: any },
-    private SocketService: SocketService
+    private SocketService: SocketService,
+    private matDialogRef:MatDialogRef<ChatDialogComponent>,
+    private dialog:MatDialog
   ) {
     this.user = data.user;
     console.log(this.user);
@@ -27,6 +29,7 @@ export class ChatDialogComponent implements OnInit {
     const usersId = localStorage.getItem('userId');
     this.SocketService.receiveundeliverdmessage(usersId).subscribe(
       (data: any) => {
+        
         //   if(data.result.sender==this.user._id){
         if (Array.isArray(data.result)) {
           data.result.forEach((element: any) => {
@@ -66,6 +69,13 @@ export class ChatDialogComponent implements OnInit {
           `this is the id whic is being opened on chat diaglog ${this.user._id}`
         );
         if (receivedData.sender == this.user._id) {
+
+          // this.dialog.open(ChatDialogComponent, {
+          //   disableClose: true,
+          //   data: {
+          //     user: this.user,
+          //   },
+          // })
     const { dateNow, timeNow } = this.SocketService.currentDateAndTime();
 
           this.chatMessages.push({

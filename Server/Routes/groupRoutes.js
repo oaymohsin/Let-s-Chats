@@ -8,5 +8,9 @@ router.get('/getGroupsById/:id',groupController.getGroupsById)
 
 router.delete('/deleteGroup/:id',groupController.deleteGroup)
 
+router.post('/makeGroupAdmin',groupController.makeGroupAdmin)
+
+router.post('/removeGroupAdmin',groupController.removeGroupAdmin)
+
 
 module.exports=router

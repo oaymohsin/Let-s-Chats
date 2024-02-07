@@ -40,7 +40,13 @@ createGroup(){
   const membersId:any=[];
   this.groupform.value.members.forEach((element:any) => {
     membersId.push(element._id)
+    
   })
+
+  // If createdBy(admin) is not in members list then push it in members list
+  if(!membersId.includes(createdBy)){
+    membersId.push(createdBy)
+  }
 
   const groupData={
     groupName:this.groupform.value.groupName,

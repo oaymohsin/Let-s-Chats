@@ -38,6 +38,7 @@
             <!-- <th scope="col">#</th> -->
             <th scope="col">Name</th>
             <th scope="col" >Remove Member</th>
+            <th scope="col" >Admin</th>
             
           </tr>
         </thead>
@@ -45,12 +46,16 @@
           <tr *ngFor="let member of group.members">
             <!-- <th scope="row">1</th> -->
             <td>{{member.username}}
-              <span *ngIf="group.createdBy==member._id" class=" admin-badge ">
+              <span *ngIf="group.admins.includes(member._id) " class=" admin-badge ">
                 Admin
               </span>
             </td>
-            <td *ngIf="group.createdBy===myId"><button class="btn btn-danger btn-sm rm-member-button">Remove</button></td>
+            <td *ngIf="group.admins.includes(myId)"><button class="btn btn-danger btn-sm rm-member-button">Remove</button></td>
             <!-- <td>@mdo</td> -->
+            <td *ngIf="group.admins.includes(myId) && !group.admins.includes(member._id)"><button class="btn btn-success btn-sm rm-member-button" (click)="makeAdmin(member._id,group._id)">Make Admin</button></td>
+            <td *ngIf="group.admins.includes(myId) && group.admins.includes(member._id) && group.createdBy!==member._id"><button class="btn btn-success btn-sm rm-member-button" (click)="removeAdmin(member._id,group._id)">RemoveAdmin</button></td>
+
+
           </tr>
         </tbody>
       </table>

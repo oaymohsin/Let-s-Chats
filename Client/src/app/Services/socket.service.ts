@@ -182,4 +182,24 @@ return {
       `http://localhost:3050/api/groups/deleteGroup/${groupId}`
     );
   }
+
+  makeGroupAdmin(groupId:any,memberId:any){
+    const data={
+      memberId:memberId,
+      groupId:groupId
+    }
+    return this.HttpClient.post(
+      'http://localhost:3050/api/groups/makeGroupAdmin',data
+    );
+  }
+
+  removeGroupAdmin(groupId:any,memberId:any){
+    const data={
+      memberId:memberId,
+      groupId:groupId
+    }
+    return this.HttpClient.post(
+      'http://localhost:3050/api/groups/removeGroupAdmin',data
+    );
+  }
 }
