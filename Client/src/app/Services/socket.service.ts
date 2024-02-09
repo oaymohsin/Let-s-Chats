@@ -202,4 +202,12 @@ return {
       'http://localhost:3050/api/groups/removeGroupAdmin',data
     );
   }
+
+  leaveGroup(groupId:any,memberId:any){
+    const data={
+      groupId:groupId,
+      memberId:memberId
+    }
+    return this.HttpClient.post('http://localhost:3050/api/groups/leaveGroup',data);
+  }
 }

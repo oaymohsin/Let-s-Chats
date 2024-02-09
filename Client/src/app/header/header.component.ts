@@ -25,8 +25,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // console.log(this.userService.getloginStatus())
+    const myId=localStorage.getItem('userId')
+    this.myId=myId;
+
     this.socketService.connectToSocket()
     this.loginStatus = this.userService.getloginStatus();
+
 
     this.authListenerSubs = this.userService
       .getauthStatusListener()
@@ -136,6 +140,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       if(data.result==true){
         // this.fetchGroups()
       }
+    })
+  }
+
+
+  leaveGroup(groupId:any,userId:any){
+    this.socketService.leaveGroup(groupId,userId).subscribe((data:any)=>{
+      console.log(data)
     })
   }
 }

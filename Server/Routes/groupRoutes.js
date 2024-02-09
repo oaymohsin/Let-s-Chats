@@ -12,5 +12,7 @@ router.post('/makeGroupAdmin',groupController.makeGroupAdmin)
 
 router.post('/removeGroupAdmin',groupController.removeGroupAdmin)
 
+router.post('/leaveGroup',groupController.leaveGroup)
+
 
 module.exports=router

@@ -182,4 +182,79 @@ exports.deleteGroup= async (req,res,next)=>{
   }
 }
 
+exports.leaveGroup = async (req, res, next) => {
+  try {
+    const groupId = req.body.groupId;
+    const memberId = req.body.memberId;
+
+    const group = await groupModel.findOne({ _id: groupId });
+
+    if (!group) {
+      return res.status(400).json({ message: "No group found", result: false });
+    }
+
+    let memberToMakeAdmin = null;
+    console.log(group.admins.length)
+    console.log(group.createdBy)
+    if (group.admins.length < 2 && group.admins.includes(memberId) && group.createdBy == memberId) {
+      memberToMakeAdmin = group.members.filter(member => member != memberId)[0];
+      console.log('Existing Admins:', group.admins);
+console.log('Existing Members:', group.members);
+
+const result = await groupModel.findOneAndUpdate(
+  { _id: groupId },
+  { $pull: { admins: memberId, members: memberId } },
+  { new: true }
+);
+
+if (!result) {
+  return res.status(400).json({
+    message: 'No group found or update failed',
+    result: false
+  });
+}
+
+// Now update the 'admins' field with $set
+result.admins = [memberToMakeAdmin];
+const updatedGroup = await result.save();
+
+console.log(updatedGroup);
+
+return res.status(200).json({
+  message: `Member left the group, and ${memberToMakeAdmin} is set as admin`,
+  result: true
+});
+
+      
+    }
+
+    if (group.admins.length >= 2 && group.admins.includes(memberId) && group.createdBy !== memberId) {
+      const result = await groupModel.findOneAndUpdate(
+        { _id: groupId },
+        { $pull: { admins: memberId, members: memberId }}
+      );
+
+      return res.status(200).json({
+        message: `Member left the group and also left the adminship`,
+        result: true
+      });
+    } else {
+      const result = await groupModel.findOneAndUpdate(
+        { _id: groupId },
+        { $pull: { members: memberId }}
+      );
+
+      return res.status(200).json({
+        message: `Member left the group`,
+        result: true
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      result: false
+    });
+  }
+};
+
 
