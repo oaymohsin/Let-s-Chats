@@ -11,9 +11,8 @@ import { FriendsComponent } from './friends/friends.component';
 import { OnlineUsersComponent } from './online-users/online-users.component';
 import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -24,9 +23,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatBadgeModule} from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatBadgeModule } from '@angular/material/badge';
 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -39,6 +38,9 @@ import { UsersService } from './Services/users.service';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { MatSelectModule } from '@angular/material/select';
 import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ErrorHandlingInterceptor } from './error-handling.interceptor';
+import { ErrorComponent } from './error/error.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +54,7 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
     ChatDialogComponent,
     CreateGroupComponent,
     GroupChatDialogComponent,
-    
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,10 +78,18 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
     MatBadgeModule,
     ConfirmDialogModule,
     ToastModule,
-    SocketIoModule.forRoot({ url: 'http://localhost:3050' })
-
+    SocketIoModule.forRoot({ url: 'http://localhost:3050' }),
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    MessageService,
+    ConfirmationService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingInterceptor,
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
+  // entryComponents:[ErrorComponent]
 })
-export class AppModule { }
+export class AppModule {}

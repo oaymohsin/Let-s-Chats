@@ -18,7 +18,7 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.0",
-    "mongoose-unique-validator": "^4.0.0",
+    "mongoose-unique-validator": "^5.0.0",
     "path": "^0.12.7",
     "socket.io": "^4.7.4"
   }
