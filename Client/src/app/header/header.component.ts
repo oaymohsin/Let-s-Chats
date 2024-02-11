@@ -124,6 +124,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.myId=myId;
     this.userService.fetchMyGroups(myId).subscribe((result:any)=>{
       this.myGroups=result.data;
+
       console.log(this.myGroups)
     })
   }
@@ -173,6 +174,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   leaveGroup(groupId:any,userId:any){
     this.socketService.leaveGroup(groupId,userId).subscribe((data:any)=>{
       console.log(data)
+      this.userService.alert(data.message)
     })
   }
 }

@@ -35,7 +35,7 @@ exports.loginUser = async (req, res, next) => {
     if (!user) {
       console.log("User not found");
       return res.status(401).json({
-        message: "Authenticaaaation failed",
+        message: "Authentication failed",
       });
     }
 
@@ -44,7 +44,7 @@ exports.loginUser = async (req, res, next) => {
     if (!result) {
       console.log(result);
       return res.status(401).json({
-        message: "Authentication failed",
+        message: "Wrong Credentials",
       });
     }
 
@@ -59,6 +59,7 @@ exports.loginUser = async (req, res, next) => {
       token: token,
       expiresIn: 3600,
       userId: user._id,
+      message:"successfully logged in"
     });
   } catch (err) {
     console.error("Login error:", err);

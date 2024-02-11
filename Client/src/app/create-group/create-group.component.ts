@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { SocketService } from '../Services/socket.service';
+import { UsersService } from '../Services/users.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-group',
@@ -12,7 +14,9 @@ export class CreateGroupComponent implements OnInit {
 public groupform:FormGroup | any;
 UsersList:any=[]
 
-constructor( public formBuilder: FormBuilder, private socketService:SocketService){}
+constructor( private userService:UsersService,
+  private router:Router,
+  public formBuilder: FormBuilder, private socketService:SocketService){}
 
 ngOnInit(): void {
   this.groupFormModel()
@@ -58,6 +62,9 @@ createGroup(){
     console.log(data)
     // sending group members as extra data with this emitter
     this.socketService.joinGroup(data.data._id,data.data.members)
+    this.userService.alert(data.message)
+    this.groupform.reset()
+    this.router.navigate(['/'])
   })
   // console.log(groupData)
 }

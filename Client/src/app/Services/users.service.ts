@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { SocketService } from './socket.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Injectable({
   providedIn: 'root',
@@ -11,19 +13,20 @@ export class UsersService {
   private loginStatus = false;
   token: any = '';
   tokenTimer: any;
-  loggedUserId:any;
+  loggedUserId: any;
   private authStatusListener = new Subject<boolean>();
-  private loggedInUserId= new Subject<any>()
+  private loggedInUserId = new Subject<any>();
   constructor(
     private HttpClient: HttpClient,
     private socketService: SocketService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   getloginStatus() {
     return this.loginStatus;
   }
-  getloggedInUserId(){
+  getloggedInUserId() {
     return this.loggedInUserId.asObservable();
   }
   getauthStatusListener() {
@@ -49,17 +52,27 @@ export class UsersService {
       'http://localhost:3050/api/user/login',
       data
     ).subscribe((response: any) => {
-      console.log(response.userId)
-      this.loggedInUserId.next(response.userId)
-      this.loggedUserId=response.userId;
-      this.token = response.token;
-      const expireInDuration = response.expiresIn;
-      this.setAuthTimer(expireInDuration);
-      const now = new Date();
-      const expirationDate = new Date(now.getTime() + expireInDuration * 1000);
-      this.saveAuthData(this.token, expirationDate, response.userId);
-      this.authStatusListener.next(true);
-      this.socketService.connectToSocket();
+      if (response.token) {
+        this.router.navigate(['/']);
+        console.log(response.userId);
+        this.loggedInUserId.next(response.userId);
+        this.loggedUserId = response.userId;
+        this.token = response.token;
+        const expireInDuration = response.expiresIn;
+        this.setAuthTimer(expireInDuration);
+        const now = new Date();
+        const expirationDate = new Date(
+          now.getTime() + expireInDuration * 1000
+        );
+        this.saveAuthData(this.token, expirationDate, response.userId);
+        this.authStatusListener.next(true);
+        this.socketService.connectToSocket();
+
+        this.alert('User Logged In successfully')
+       
+      } else {
+        this.router.navigate(['/login']);
+      }
     });
   }
 
@@ -128,8 +141,19 @@ export class UsersService {
     return this.HttpClient.get('http://localhost:3050/api/user/getUsers');
   }
 
-  fetchMyGroups(id:any){
-    return this.HttpClient.get('http://localhost:3050/api/groups/getGroupsById/'+ id)
+  fetchMyGroups(id: any) {
+    return this.HttpClient.get(
+      'http://localhost:3050/api/groups/getGroupsById/' + id
+    );
   }
-  
+
+  alert(message:any){
+    // this.snackBar.open('logged in successfully');
+    this.snackBar.openFromComponent(NotificationComponent, {
+      duration: 5000, // Set duration in milliseconds
+      data: { message: message },
+      horizontalPosition: 'center', // Align horizontally
+      verticalPosition: 'top' // Align vertically
+    });
+  }
 }

@@ -3,7 +3,7 @@
         <div class="container-fluid">
           <!-- Logo on the left corner -->
           <a class="navbar-brand" href="#">
-            <img src="your-logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-top">
+            <img src="" alt="Logo" width="30" height="30" class="d-inline-block align-top">
             Your Chat App
           </a>
     
@@ -105,7 +105,7 @@
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Groups</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body d-flex justify-content-center "  style="max-height: 800px; overflow-y: auto;">
+      <div *ngIf="myGroups.length>=1" class="modal-body d-flex justify-content-center "  style="max-height: 800px; overflow-y: auto;">
 
         <table class="table w-75 table-striped" >
           <thead>
@@ -137,6 +137,10 @@
         </table>
 
 
+      </div>
+
+      <div *ngIf="myGroups.length<1">
+        <p class="m-3">This User has no Groups</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

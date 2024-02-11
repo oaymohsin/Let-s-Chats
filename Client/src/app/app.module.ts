@@ -26,6 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -41,6 +42,7 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ErrorHandlingInterceptor } from './error-handling.interceptor';
 import { ErrorComponent } from './error/error.component';
+import { NotificationComponent } from './notification/notification.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,6 +57,7 @@ import { ErrorComponent } from './error/error.component';
     CreateGroupComponent,
     GroupChatDialogComponent,
     ErrorComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,6 +81,7 @@ import { ErrorComponent } from './error/error.component';
     MatBadgeModule,
     ConfirmDialogModule,
     ToastModule,
+    MatSnackBarModule,
     SocketIoModule.forRoot({ url: 'http://localhost:3050' }),
   ],
   providers: [

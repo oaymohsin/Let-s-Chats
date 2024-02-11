@@ -30,8 +30,8 @@
                     
                     <mat-form-field class="w-100" >
                       <mat-label>Add Members</mat-label>
-                      <mat-select formControlName="members" multiple>
-                        <mat-option *ngFor="let user of UsersList" [value]="user">{{user.username}}</mat-option>
+                      <mat-select formControlName="members" multiple >
+                        <mat-option *ngFor="let user of UsersList" [value]="user">{{user.username}} </mat-option>
                       </mat-select>
                     </mat-form-field>
                 
