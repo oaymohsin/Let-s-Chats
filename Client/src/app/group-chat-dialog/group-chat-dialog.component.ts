@@ -118,4 +118,10 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
     })
     // this.group=data.groupData;
   }
+
+  leaveGroup(groupId:any,userId:any){
+    this.SocketService.leaveGroup(groupId,userId).subscribe((data:any)=>{
+      console.log(data)
+    })
+  }
 }

@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChatDialogComponent } from '../chat-dialog/chat-dialog.component';
 import { SocketService } from '../Services/socket.service';
 import { GroupChatDialogComponent } from '../group-chat-dialog/group-chat-dialog.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   myId:any;
   constructor(private userService: UsersService,
      private dialog: MatDialog,
-     private socketService:SocketService) {}
+     private socketService:SocketService, private confirmationService:ConfirmationService ,private messageService:MessageService) {}
 
   ngOnInit(): void {
     // console.log(this.userService.getloginStatus())
@@ -44,6 +45,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // }
     // console.log(this.loginStatus);
   }
+
+  confirm1(event: Event) {
+    this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Are you sure that you want to proceed?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        acceptIcon:"none",
+        rejectIcon:"none",
+        rejectButtonStyleClass:"p-button-text",
+        accept: () => {
+            this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+}
+
+
+
+
 
   logOut() {
     this.userService.logOut();

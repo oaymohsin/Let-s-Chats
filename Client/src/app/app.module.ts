@@ -28,6 +28,9 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatBadgeModule} from '@angular/material/badge';
 
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+
 import { SocketIoModule } from 'ngx-socket-io';
 import { config } from 'rxjs';
 import { ChatDialogComponent } from './chat-dialog/chat-dialog.component';
@@ -71,6 +74,8 @@ import { GroupChatDialogComponent } from './group-chat-dialog/group-chat-dialog.
     MatIconModule,
     MatMenuModule,
     MatBadgeModule,
+    ConfirmDialogModule,
+    ToastModule,
     SocketIoModule.forRoot({ url: 'http://localhost:3050' })
 
   ],
