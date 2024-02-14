@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 export class GroupChatDialogComponent implements OnInit,OnDestroy {
   @ViewChild('receivedMessageTone') receivedMessageTone: any;
   group:any;
+  groupMembers:any=[]
   message: any;
   chatMessages:any=[]
   myId:any;
@@ -26,6 +27,8 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
     private dialog:MatDialog
   ){
     this.group=data.groupData;
+
+    
 
    
     
@@ -86,7 +89,12 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
     }
   }
 
-  showGroupMembers(){
+  showGroupMembers(groupId:any){
+    this.SocketService.fetchGroupMembers(groupId).subscribe((result:any)=>{
+      this.groupMembers=result.members
+      // console.log(this.groupMembers)
+
+    })
     this.groupMemberButton=true;
   }
 
@@ -107,12 +115,15 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
   makeAdmin(memberId:any,groupId:any){
     this.SocketService.makeGroupAdmin(groupId,memberId).subscribe((data:any)=>{
       console.log(data.message)
+      this.showGroupMembers(groupId)
+
     })
   }
 
   removeAdmin(memberId:any,groupId:any){
     this.SocketService.removeGroupAdmin(groupId,memberId).subscribe((data:any)=>{
       console.log(data.message)
+      this.showGroupMembers(groupId)
     
 
     })
@@ -122,6 +133,7 @@ export class GroupChatDialogComponent implements OnInit,OnDestroy {
   leaveGroup(groupId:any,userId:any){
     this.SocketService.leaveGroup(groupId,userId).subscribe((data:any)=>{
       console.log(data)
+      this.showGroupMembers(groupId)
     })
   }
 }

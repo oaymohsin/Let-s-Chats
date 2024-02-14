@@ -134,7 +134,7 @@ exports.getGroupsById = async (req, res, next) => {
             result: true,
           });
         } else {
-          res.status(404).json({
+          res.status(200).json({
             message: "This user has no groups",
             data: null,
             result: false,
@@ -198,7 +198,8 @@ exports.leaveGroup = async (req, res, next) => {
     if (
       group.admins.length < 2 &&
       group.admins.includes(memberId) &&
-      group.createdBy == memberId && group.members.length > 1
+      group.createdBy == memberId &&
+      group.members.length > 1
     ) {
       //If group has only one group admin then make another member admin
       memberToMakeAdmin = group.members.filter(
@@ -252,10 +253,9 @@ exports.leaveGroup = async (req, res, next) => {
         { new: true }
       );
 
-      const deleteGroup= await groupModel.deleteOne({_id:groupId})
+      const deleteGroup = await groupModel.deleteOne({ _id: groupId });
 
-
-      if (deleteGroup.deletedCount<0) {
+      if (deleteGroup.deletedCount < 0) {
         return res.status(400).json({
           message: "No group found or update failed",
           result: false,
@@ -274,7 +274,6 @@ exports.leaveGroup = async (req, res, next) => {
       });
     }
 
-
     if (
       group.admins.length >= 2 &&
       group.admins.includes(memberId) &&
@@ -290,7 +289,6 @@ exports.leaveGroup = async (req, res, next) => {
         result: true,
       });
     } else {
-      
       const result = await groupModel.findOneAndUpdate(
         { _id: groupId },
         { $pull: { members: memberId } }
@@ -308,3 +306,49 @@ exports.leaveGroup = async (req, res, next) => {
     });
   }
 };
+
+exports.fetchGroupMembers = async (req, res, next) => {
+  try {
+    const groupId = req.params.id;
+    await groupModel.findOne({ _id: groupId }).then(async(group) => {
+      // console.log(group)
+      const populatedGroup = await groupModel.populate(group, {
+        path: "members",
+      });
+      const groupMembers = populatedGroup.members;
+
+      return res.status(200).json({
+        message: "Group Members",
+        members: groupMembers,
+        result: true,
+      });
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      result: false,
+    });
+  }
+};
+
+exports.getGroupByGroupId= async(req,res,next)=>{
+  try {
+    const groupId= req.params.id;
+    await groupModel.findOne({_id:groupId}).then(async(group)=>{
+      const populatedGroup= await groupModel.populate(group,[
+        {path:"members"}
+      ])
+
+      res.status(200).json({
+        message:"fetched Successfully",
+        group:populatedGroup,
+        result:true
+      })
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:error.message,
+      result:false
+    })
+  }
+}

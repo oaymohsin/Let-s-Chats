@@ -7,7 +7,7 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="showGroupMembers()">
+        <button mat-menu-item (click)="showGroupMembers(group._id)">
           <i class="fa fa-users" aria-hidden="true"></i>
           <span> &nbsp; Group Members</span>
         </button>
@@ -43,7 +43,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let member of group.members">
+          <tr *ngFor="let member of groupMembers">
             <!-- <th scope="row">1</th> -->
             <td>{{member.username}}
               <span *ngIf="group.admins.includes(member._id) " class=" admin-badge ">

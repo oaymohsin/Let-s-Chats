@@ -105,7 +105,7 @@
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Groups</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div *ngIf="myGroups.length>=1" class="modal-body d-flex justify-content-center "  style="max-height: 800px; overflow-y: auto;">
+      <div *ngIf="myGroups!=null" class="modal-body d-flex justify-content-center "  style="max-height: 800px; overflow-y: auto;">
 
         <table class="table w-75 table-striped" >
           <thead>
@@ -127,8 +127,8 @@
 
               </td> -->
              <td><button class="btn btn-primary btn-sm" data-bs-dismiss="modal" (click)="openGroupDialog(group)">Group Chat</button></td>
-             <td><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="leaveGroup(group._id,myId)">Leave Group</button></td>
-             <td *ngIf="group.createdBy==myId"><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="deleteGroup(group._id)">Delete Group</button></td>
+             <td><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="leaveGroup(group._id,myId,group.groupName)">Leave Group</button></td>
+             <td *ngIf="group.createdBy==myId"><button class="btn btn-danger btn-sm" data-bs-dismiss="modal" (click)="deleteGroup(group._id,group.groupName)">Delete Group</button></td>
 
 
             </tr>
@@ -139,7 +139,7 @@
 
       </div>
 
-      <div *ngIf="myGroups.length<1">
+      <div *ngIf="myGroups==null">
         <p class="m-3">This User has no Groups</p>
       </div>
       <div class="modal-footer">

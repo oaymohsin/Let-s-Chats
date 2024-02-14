@@ -43,6 +43,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ErrorHandlingInterceptor } from './error-handling.interceptor';
 import { ErrorComponent } from './error/error.component';
 import { NotificationComponent } from './notification/notification.component';
+import { ConfirmDialogueComponent } from './confirm-dialogue/confirm-dialogue.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,6 +59,7 @@ import { NotificationComponent } from './notification/notification.component';
     GroupChatDialogComponent,
     ErrorComponent,
     NotificationComponent,
+    ConfirmDialogueComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +87,12 @@ import { NotificationComponent } from './notification/notification.component';
     SocketIoModule.forRoot({ url: 'http://localhost:3050' }),
   ],
   providers: [
+  
     MessageService,
+    
+    SocketService,
+    
+    
     ConfirmationService,
     {
       provide: HTTP_INTERCEPTORS,

@@ -14,27 +14,35 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   loginStatus: any = false;
+  private confirmDialogSubs: Subscription | any;
   private authListenerSubs: Subscription | any;
   UsersList: any = [];
-  openedDialogList:any=[]
-  openedGroupDialogList:any=[]
-  myGroups:any=[]  
-  myId:any;
-  constructor(private userService: UsersService,
-     private dialog: MatDialog,
-     private socketService:SocketService, 
-    //  private confirmationService:ConfirmationService ,
-    //  private messageService:MessageService
-     ) {}
+  openedDialogList: any = [];
+  openedGroupDialogList: any = [];
+  myGroups: any = [];
+  myId: any;
+  constructor(
+    private userService: UsersService,
+    private dialog: MatDialog,
+    private socketService: SocketService //  private confirmationService:ConfirmationService ,
+  ) //  private messageService:MessageService
+  {}
 
   ngOnInit(): void {
     // console.log(this.userService.getloginStatus())
-    const myId=localStorage.getItem('userId')
-    this.myId=myId;
 
-    this.socketService.connectToSocket()
+
+    
+
+
+
+    // this.fetchGroups()
+    // this.fetchUsers()
+    const myId = localStorage.getItem('userId');
+    this.myId = myId;
+
+    this.socketService.connectToSocket();
     this.loginStatus = this.userService.getloginStatus();
-
 
     this.authListenerSubs = this.userService
       .getauthStatusListener()
@@ -49,27 +57,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // console.log(this.loginStatus);
   }
 
-//   confirm1(event: Event) {
-//     this.confirmationService.confirm({
-//         target: event.target as EventTarget,
-//         message: 'Are you sure that you want to proceed?',
-//         header: 'Confirmation',
-//         icon: 'pi pi-exclamation-triangle',
-//         acceptIcon:"none",
-//         rejectIcon:"none",
-//         rejectButtonStyleClass:"p-button-text",
-//         accept: () => {
-//             this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
-//         },
-//         reject: () => {
-//             this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-//         }
-//     });
-// }
-
-
-
-
+  //   confirm1(event: Event) {
+  //     this.confirmationService.confirm({
+  //         target: event.target as EventTarget,
+  //         message: 'Are you sure that you want to proceed?',
+  //         header: 'Confirmation',
+  //         icon: 'pi pi-exclamation-triangle',
+  //         acceptIcon:"none",
+  //         rejectIcon:"none",
+  //         rejectButtonStyleClass:"p-button-text",
+  //         accept: () => {
+  //             this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+  //         },
+  //         reject: () => {
+  //             this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+  //         }
+  //     });
+  // }
 
   logOut() {
     this.userService.logOut();
@@ -77,6 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.authListenerSubs.unsubscribe();
+    this.confirmDialogSubs.unsubscribe();
   }
 
   fetchUsers() {
@@ -88,7 +93,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openChatDialog(user: any) {
     const dialogPosition = { bottom: '170px', right: '20px' };
-  
+
     if (this.openedDialogList.length > 0) {
       // Calculate the total horizontal offset based on existing dialogs
       let totalOffset = 0;
@@ -97,7 +102,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       dialogPosition.right = `${totalOffset}px`;
     }
-  
+
     const dialogRef = this.dialog.open(ChatDialogComponent, {
       disableClose: true,
       width: '500', // Adjust as needed
@@ -105,34 +110,34 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       data: { user },
     });
-  
+
     this.openedDialogList.push(user._id);
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog Result: ${result}`);
-      this.openedDialogList = this.openedDialogList.filter((id: any) => id !== user._id);
+      this.openedDialogList = this.openedDialogList.filter(
+        (id: any) => id !== user._id
+      );
     });
-  
+
     this.socketService.connectToUser(user._id);
   }
-  
-  createGroup(){
+
+  createGroup() {}
+
+  fetchGroups() {
+    const myId = localStorage.getItem('userId');
+    this.myId = myId;
+    this.userService.fetchMyGroups(myId).subscribe((result: any) => {
+      this.myGroups = result.data;
+
+      console.log(this.myGroups);
+    });
   }
-
-  fetchGroups(){
-    const myId=localStorage.getItem('userId')
-    this.myId=myId;
-    this.userService.fetchMyGroups(myId).subscribe((result:any)=>{
-      this.myGroups=result.data;
-
-      console.log(this.myGroups)
-    })
-  }
-  openGroupDialog(groupData:any){
-
-    console.log(groupData)
+  openGroupDialog(groupData: any) {
+    console.log(groupData);
     const dialogPosition = { bottom: '170px', right: '20px' };
-  
+
     if (this.openedGroupDialogList.length > 0) {
       // Calculate the total horizontal offset based on existing dialogs
       let totalOffset = 0;
@@ -141,7 +146,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       dialogPosition.right = `${totalOffset}px`;
     }
-  
+
     const dialogRef = this.dialog.open(GroupChatDialogComponent, {
       disableClose: true,
       width: '500', // Adjust as needed
@@ -149,32 +154,64 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       data: { groupData },
     });
-  
+
     this.openedGroupDialogList.push(groupData._id);
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog Result: ${result}`);
-      this.openedDialogList = this.openedDialogList.filter((id: any) => id !==groupData._id);
+      this.openedDialogList = this.openedDialogList.filter(
+        (id: any) => id !== groupData._id
+      );
     });
-  
+
     // this.socketService.connectToUser(user._id);
-
   }
 
-  deleteGroup(groupId:any){
-    this.socketService.deleteGroup(groupId).subscribe((data:any)=>{
-      console.log(data)
-      if(data.result==true){
-        // this.fetchGroups()
-      }
-    })
+  deleteGroup(groupId: any, groupName: any) {
+    const confirmData: any = {
+      heading: `Are you Sure to delete ${groupName} group?`,
+      okButton: 'Yes Delete!',
+    };
+    //Opening dialog box which ask for confirmation to delete
+    this.userService.confirmation(confirmData);
+
+    this.confirmDialogSubs = this.userService
+      .getConfirmDialogListener()
+      .subscribe((result: any) => {
+        if (result) {
+          this.socketService.deleteGroup(groupId).subscribe((data: any) => {
+            console.log(data);
+            if (data.result == true) {
+              this.userService.alert(data.message);
+              this.fetchGroups()
+            }
+          });
+        }
+      });
   }
 
+  leaveGroup(groupId: any, userId: any, groupName: any) {
+    const confirmData: any = {
+      heading: `Are you Sure to leave ${groupName} group?`,
+      okButton: 'Yes Leave!',
+    };
 
-  leaveGroup(groupId:any,userId:any){
-    this.socketService.leaveGroup(groupId,userId).subscribe((data:any)=>{
-      console.log(data)
-      this.userService.alert(data.message)
-    })
+    this.userService.confirmation(confirmData);
+
+    this.confirmDialogSubs = this.userService
+      .getConfirmDialogListener()
+      .subscribe((result: any) => {
+        if (result) {
+          this.socketService
+            .leaveGroup(groupId, userId)
+            .subscribe((data: any) => {
+              this.fetchGroups()
+              console.log(data);
+              this.userService.alert(data.message);
+              
+
+            });
+        }
+      });
   }
 }

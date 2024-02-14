@@ -5,6 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { SocketService } from './socket.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationComponent } from '../notification/notification.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogueComponent } from '../confirm-dialogue/confirm-dialogue.component';
 
 @Injectable({
   providedIn: 'root',
@@ -14,18 +16,24 @@ export class UsersService {
   token: any = '';
   tokenTimer: any;
   loggedUserId: any;
+  private confirmDialogResponse= new Subject<boolean> 
   private authStatusListener = new Subject<boolean>();
   private loggedInUserId = new Subject<any>();
   constructor(
     private HttpClient: HttpClient,
     private socketService: SocketService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private confirmDialog:MatDialog
   ) {}
 
   getloginStatus() {
     return this.loginStatus;
   }
+  getConfirmDialogListener(){
+    return this.confirmDialogResponse.asObservable()
+  }
+
   getloggedInUserId() {
     return this.loggedInUserId.asObservable();
   }
@@ -155,5 +163,20 @@ export class UsersService {
       horizontalPosition: 'center', // Align horizontally
       verticalPosition: 'top' // Align vertically
     });
+  }
+
+  confirmation(data:any){
+    // let result=false;
+    const confirmDialogRef=this.confirmDialog.open(ConfirmDialogueComponent,{data:{
+      heading:data.heading,
+      okButton:data.okButton
+    
+    }})
+    confirmDialogRef.afterClosed().subscribe((data:any)=>{
+      if(data){
+        this.confirmDialogResponse.next(true)
+      }
+      confirmDialogRef.close()
+    })
   }
 }

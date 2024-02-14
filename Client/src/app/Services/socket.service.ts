@@ -1,36 +1,104 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Observable, Subject, Subscription } from 'rxjs';
 import io from 'socket.io-client';
 import { ChatDialogComponent } from '../chat-dialog/chat-dialog.component';
+import { UsersService } from './users.service';
 @Injectable({
   providedIn: 'root',
 })
-export class SocketService {
+export class SocketService implements OnInit, OnDestroy {
   private userList: any = [];
   private socket: any;
   private serverUrl = 'http://localhost:3050';
+  private messageSubject = new Subject<any>();
+  private messageSubscription: Subscription | any;
+  private dialogOpenSet = new Set<string>();
+
   // private CurrentDateTime={}
-  constructor(private HttpClient: HttpClient, private dialog: MatDialog) {
+  constructor(
+    private HttpClient: HttpClient,
+    private dialog: MatDialog,
+    private chatDialog: MatDialog
+  ) {
+    console.log('SocketService constructor called.');
     this.connectToSocket();
-    this.fetchAllUsers();
-    console.log(this.userList)
+    // this.setupMessageListener()
+    // this.socket.on('receiveMessageFromUser', (data: any) => {
+    //   console.log('Message received in SocketService:', data);
+    //   this.messageSubject.next(data);
+    // });
+    // this.receiveMessageFromUser();
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.fetchAllUsers();
+      console.log(this.userList);
+    }
     // this.currentDateAndTime()
     // this.openChatDialog('65aa96cef55a55e7b1d18f97');
   }
+  ngOnInit(): void {
+    // this.socket.on('receiveMessageFromUser', (data: any) => {
+    //   console.log('Message received in SocketService:', data);
+    //   // alert("mesage received")
+    //   this.messageSubject.next(data);
+    //   // this.openChatDialog(data.sender);
+    // });
+    // this.connectToSocket();
+    // this.socket.on('receiveMessageFromUser', (data: any) => {
+    //   // alert("mesage received")
+    //   this.messageSubject.next(data);
+    //     // this.openChatDialog(data.sender);
+    // });
+    //connect to socket start
+    // const token = localStorage.getItem('token');
+    // if (token) {
+    //   try {
+    //     this.socket = io(this.serverUrl, {
+    //       auth: {
+    //         token: token,
+    //       },
+    //     });
+    //     // this.fetchAllUsers()
+    //     // Handle socket events or perform additional setup here
+    //     // this.setupSocketEvents();
+    //   } catch (error) {
+    //     console.error('Error connecting to socket:', error);
+    //   }
+    // } else {
+    //   console.warn('Token is not available. Socket connection aborted.');
+    // }
+    //connect to socket end
+    // this.connectToSocket();
+    // this.receiveMessageFromUser()
+    // this.receiveMessageFromUser().subscribe((data:any)=>{
+    // this.chatDialog.open(ChatDialogComponent,{data:data})
+    //   console.log("message Received")
+    // })
+    // this.socket.on('receiveMessageFromUser', (data: any) => {
+    //   // observer.next(data);
+    //   console.log('message received');
+    // });
+  }
+  getSocket() {
+    return this.socket;
+  }
+  getMessageSubject() {
+    console.log('message reached here');
+    return this.messageSubject.asObservable();
+  }
 
-  getUsersList(){
-    return this.userList
+  getUsersList() {
+    return this.userList;
   }
   fetchAllUsers() {
     this.HttpClient.get('http://localhost:3050/api/user/getUsers').subscribe(
       (users: any) => {
-        users.result.forEach((element:any) => {
-        this.userList.push(element);
-          
+        users.result.forEach((element: any) => {
+          this.userList.push(element);
         });
-        console.log(this.userList)
+        console.log(this.userList);
         // this.openChatDialog('65aa96cef55a55e7b1d18f97');
       }
     );
@@ -38,17 +106,30 @@ export class SocketService {
 
   connectToSocket() {
     const token = localStorage.getItem('token');
-
+  
     if (token) {
       try {
         this.socket = io(this.serverUrl, {
           auth: {
-            token: token,
+            token,
           },
         });
-        // this.fetchAllUsers()
-        // Handle socket events or perform additional setup here
-        // this.setupSocketEvents();
+  
+        this.socket.on('connect', () => {
+
+          //Automatically received message functionality takes many days to implement and at last I fixed it through the setupMessageListener method and calling it in the socket on connect 
+
+          if (!this.messageSubscription) {
+            console.log("setupMessageListener called")
+            this.setupMessageListener();
+          }
+          // this.setupMessageListener();
+          // Handle other connection-related tasks here
+        });
+  
+        this.socket.on('disconnect', () => {
+          // Handle disconnect events
+        });
       } catch (error) {
         console.error('Error connecting to socket:', error);
       }
@@ -56,6 +137,8 @@ export class SocketService {
       console.warn('Token is not available. Socket connection aborted.');
     }
   }
+  
+
   disconnectFromSocket() {
     // Disconnect from the Socket.IO server
     this.socket.disconnect();
@@ -65,35 +148,64 @@ export class SocketService {
     this.socket.emit('connectToUser', userId);
   }
 
-  joinGroup(groupId:string,groupMembers:any){
-    this.socket.emit('getGroups', { groupId: groupId, groupMembers: groupMembers }, (membersSocketIds:any) => {
-      console.log('Received membersSocketIds from server:', membersSocketIds);
-      // Do something with the received data on the client side
-      membersSocketIds.forEach((socketId: any) => {
-        this.socket.emit('joinGroup', { groupId: groupId, targetSocketId: socketId });
-      })
-    });
-    
+  joinGroup(groupId: string, groupMembers: any) {
+    this.socket.emit(
+      'getGroups',
+      { groupId: groupId, groupMembers: groupMembers },
+      (membersSocketIds: any) => {
+        console.log('Received membersSocketIds from server:', membersSocketIds);
+        // Do something with the received data on the client side
+        membersSocketIds.forEach((socketId: any) => {
+          this.socket.emit('joinGroup', {
+            groupId: groupId,
+            targetSocketId: socketId,
+          });
+        });
+      }
+    );
   }
   sendMessageToUser(targetUserId: string, message: string): void {
     this.socket.emit('sendMessageToUser', { targetUserId, message });
+    // this.openChatDialog(targetUserId);
   }
 
-  receiveMessageFromUser(): Observable<string> {
-    return new Observable((observer) => {
-      this.socket.on('receiveMessageFromUser', (data: any) => {
-        observer.next(data);
-        setTimeout(() => {
-        this.openChatDialog(data.sender)
-          
-        }, 500);
-      });
-    });
+  private setupMessageListener() {
+  
+    this.messageSubscription=this.socket.on(
+      'receiveMessageFromUser',
+      (data: any) => {
+        console.log('Message received in SocketService:', data);
+        if (!this.dialogOpenSet.has(data.sender)) {
+          this.openChatDialog(data.sender);
+          this.dialogOpenSet.add(data.sender); // Add to the set
+        }else{
+          console.log('dialog already opened')
+        }
+        
+      }
+    );
   }
+
+  // receiveMessageFromUser(): Observable<string> {
+  //   return new Observable((observer) => {
+  //     this.socket.on('receiveMessageFromUser', (data: any) => {
+  //       console.log('Message received in SocketService:', data);
+  //       // alert("mesage received")
+  //       observer.next(data);
+
+  //       // this.openChatDialog(data.sender);
+  //     });
+  //   });
+  // }
 
   receiveundeliverdmessage(userId: any) {
     return this.HttpClient.get(
       `http://localhost:3050/api/messages/getMessages/${userId}`
+    );
+  }
+  fetchGroupMembers(groupId: any) {
+    return this.HttpClient.get(
+      `http://localhost:3050/api/groups/fetchGroupMembers/${groupId}`
     );
   }
 
@@ -104,57 +216,66 @@ export class SocketService {
   }
 
   openChatDialog(userId: any) {
-    const filteredUser = this.userList.filter(
-      (user: any) => user._id == userId
-    );
-    console.log(filteredUser);
-    //   const dialogRef = this.dialog.open(ChatDialogComponent, {
-    //     disableClose: true,
-    //     data: { filteredUser },
-    //   });
-  }
+    const userArray = this.userList.filter((user: any) => user._id == userId);
+    const user = userArray[0];
+    console.log(user);
 
-  currentDateAndTime(){
-    // Create a new Date object
-const currentDate = new Date();
-
-// Get the current date
-const day = currentDate.getDate();
-const month = currentDate.getMonth() + 1; // Months are zero-based
-const year = currentDate.getFullYear();
-
-// Get the current time
-const hours = currentDate.getHours();
-const minutes = currentDate.getMinutes();
-const seconds = currentDate.getSeconds();
-
-// Format the date and time
-const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-
-// Display the result
-// console.log('Current Date:', formattedDate);
-
-
-// console.log('Current Time:', formattedTime);
-
-return {
-  dateNow:formattedDate,
-  timeNow:formattedTime
-}
-
-  }
-
-  createGroup(groupName:string,createdBy:string,members:any){
-    const data={
-      groupName:groupName,
-      createdBy:createdBy,
-      members:members
+    if (this.dialogOpenSet.has(userId)) {
+      console.log('Dialog already open for', userId);
+      return; // Prevent opening the dialog
     }
-  return this.HttpClient.post('http://localhost:3050/api/groups/createGroup',data);
+    const dialogRef = this.dialog.open(ChatDialogComponent, {
+      disableClose: true,
+      data: { user },
+    });
   }
 
-  sendMessageToGroup(groupId:any, message:any){
+  currentDateAndTime() {
+    // Create a new Date object
+    const currentDate = new Date();
+
+    // Get the current date
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1; // Months are zero-based
+    const year = currentDate.getFullYear();
+
+    // Get the current time
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+
+    // Format the date and time
+    const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${
+      day < 10 ? '0' + day : day
+    }`;
+    const formattedTime = `${hours < 10 ? '0' + hours : hours}:${
+      minutes < 10 ? '0' + minutes : minutes
+    }:${seconds < 10 ? '0' + seconds : seconds}`;
+
+    // Display the result
+    // console.log('Current Date:', formattedDate);
+
+    // console.log('Current Time:', formattedTime);
+
+    return {
+      dateNow: formattedDate,
+      timeNow: formattedTime,
+    };
+  }
+
+  createGroup(groupName: string, createdBy: string, members: any) {
+    const data = {
+      groupName: groupName,
+      createdBy: createdBy,
+      members: members,
+    };
+    return this.HttpClient.post(
+      'http://localhost:3050/api/groups/createGroup',
+      data
+    );
+  }
+
+  sendMessageToGroup(groupId: any, message: any) {
     this.socket.emit('sendMessageToGroup', { groupId, message });
   }
 
@@ -163,7 +284,7 @@ return {
   //   this.socket.on('receiveMessageFromGroup', (data:any) => {
   //     const sender = data.sender;
   //     const message = data.message;
-  
+
   //     // Handle the incoming group message, e.g., display it in the UI
   //     console.log(`Received message in group ${sender}: ${message}`);
   //   });
@@ -177,37 +298,55 @@ return {
     });
   }
 
-  deleteGroup(groupId:any){
+  deleteGroup(groupId: any) {
     return this.HttpClient.delete(
       `http://localhost:3050/api/groups/deleteGroup/${groupId}`
     );
   }
 
-  makeGroupAdmin(groupId:any,memberId:any){
-    const data={
-      memberId:memberId,
-      groupId:groupId
-    }
+  makeGroupAdmin(groupId: any, memberId: any) {
+    const data = {
+      memberId: memberId,
+      groupId: groupId,
+    };
     return this.HttpClient.post(
-      'http://localhost:3050/api/groups/makeGroupAdmin',data
+      'http://localhost:3050/api/groups/makeGroupAdmin',
+      data
     );
   }
 
-  removeGroupAdmin(groupId:any,memberId:any){
-    const data={
-      memberId:memberId,
-      groupId:groupId
-    }
+  removeGroupAdmin(groupId: any, memberId: any) {
+    const data = {
+      memberId: memberId,
+      groupId: groupId,
+    };
     return this.HttpClient.post(
-      'http://localhost:3050/api/groups/removeGroupAdmin',data
+      'http://localhost:3050/api/groups/removeGroupAdmin',
+      data
     );
   }
 
-  leaveGroup(groupId:any,memberId:any){
-    const data={
-      groupId:groupId,
-      memberId:memberId
+  leaveGroup(groupId: any, memberId: any) {
+    const data = {
+      groupId: groupId,
+      memberId: memberId,
+    };
+    return this.HttpClient.post(
+      'http://localhost:3050/api/groups/leaveGroup',
+      data
+    );
+  }
+
+  fetchGroupById(id: any) {
+    return this.HttpClient.get(
+      'http://localhost:3050/api/groups/fetchGroupsById/' + id
+    );
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe from the message listener when the service is destroyed
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
     }
-    return this.HttpClient.post('http://localhost:3050/api/groups/leaveGroup',data);
   }
 }

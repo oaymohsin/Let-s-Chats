@@ -1,18 +1,20 @@
-const express=require('express')
-const groupController=require('../Controllers/groupController')
-const router=express.Router()
+const express = require("express");
+const groupController = require("../Controllers/groupController");
+const router = express.Router();
 
-router.post('/createGroup',groupController.createGroup)
+router.post("/createGroup", groupController.createGroup);
 
-router.get('/getGroupsById/:id',groupController.getGroupsById)
+router.get("/getGroupsById/:id", groupController.getGroupsById);
 
-router.delete('/deleteGroup/:id',groupController.deleteGroup)
+router.get("/fetchGroupMembers/:id", groupController.fetchGroupMembers);
 
-router.post('/makeGroupAdmin',groupController.makeGroupAdmin)
+router.get("/fetchGroupsById/:id", groupController.getGroupByGroupId);
+router.delete("/deleteGroup/:id", groupController.deleteGroup);
 
-router.post('/removeGroupAdmin',groupController.removeGroupAdmin)
+router.post("/makeGroupAdmin", groupController.makeGroupAdmin);
 
-router.post('/leaveGroup',groupController.leaveGroup)
+router.post("/removeGroupAdmin", groupController.removeGroupAdmin);
 
+router.post("/leaveGroup", groupController.leaveGroup);
 
-module.exports=router
+module.exports = router;
