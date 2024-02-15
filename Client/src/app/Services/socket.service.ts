@@ -15,6 +15,7 @@ export class SocketService implements OnInit, OnDestroy {
   private messageSubject = new Subject<any>();
   private messageSubscription: Subscription | any;
   private dialogOpenSet = new Set<string>();
+  private messageObject=new Subject<any>();
 
   // private CurrentDateTime={}
   constructor(
@@ -81,8 +82,14 @@ export class SocketService implements OnInit, OnDestroy {
     //   console.log('message received');
     // });
   }
+  getdialogOpenSet(){
+    return this.dialogOpenSet
+  }
   getSocket() {
     return this.socket;
+  }
+  getmessageObject(){
+    return this.messageObject.asObservable()
   }
   getMessageSubject() {
     console.log('message reached here');
@@ -175,11 +182,26 @@ export class SocketService implements OnInit, OnDestroy {
       'receiveMessageFromUser',
       (data: any) => {
         console.log('Message received in SocketService:', data);
+        const { dateNow, timeNow } = this.currentDateAndTime();
+
+        const messageObj={
+          sender:data.sender,
+          message:data.message,
+          date:dateNow,
+          time:timeNow
+        }
+
         if (!this.dialogOpenSet.has(data.sender)) {
-          this.openChatDialog(data.sender);
+
+          this.openChatDialog(data.sender,messageObj);
+        this.messageObject.next(messageObj)
+
+          console.log(messageObj)
           this.dialogOpenSet.add(data.sender); // Add to the set
         }else{
           console.log('dialog already opened')
+          this.messageObject.next(messageObj)
+
         }
         
       }
@@ -215,7 +237,7 @@ export class SocketService implements OnInit, OnDestroy {
     );
   }
 
-  openChatDialog(userId: any) {
+  openChatDialog(userId: any ,messageObj:any) {
     const userArray = this.userList.filter((user: any) => user._id == userId);
     const user = userArray[0];
     console.log(user);
@@ -226,8 +248,14 @@ export class SocketService implements OnInit, OnDestroy {
     }
     const dialogRef = this.dialog.open(ChatDialogComponent, {
       disableClose: true,
-      data: { user },
+      data: { user ,messageObj},
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.dialogOpenSet.delete(user._id)
+     console.log(`dialogset: ${this.dialogOpenSet}`);
+
+   });
   }
 
   currentDateAndTime() {

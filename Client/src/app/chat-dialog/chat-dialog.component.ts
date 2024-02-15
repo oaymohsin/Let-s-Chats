@@ -21,6 +21,7 @@ export class ChatDialogComponent implements OnInit ,OnDestroy{
   sentMessages: any = [];
   receivedMessages: any = [];
   private messageListener:Subscription |any;
+  private messagObject:Subscription |any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: any },
@@ -30,10 +31,27 @@ export class ChatDialogComponent implements OnInit ,OnDestroy{
     private userService: UsersService
   ) {
     this.user = data.user;
+    this.messagObject=this.SocketService.getmessageObject().subscribe((data:any)=>{
+      console.log(`this is message object ${data.message}`)
+    this.chatMessages.push({
+      type: 'received',
+      message: data.message,
+      sender: data.sender,
+      Time: data.time,
+      Date: data.date,
+    });
+    })
+   
+    
     console.log(this.user);
   }
   ngOnInit(): void {
     this.SocketService.connectToUser(this.user._id);
+
+    
+
+
+
 
     const usersId = localStorage.getItem('userId');
     this.SocketService.receiveundeliverdmessage(usersId).subscribe(
@@ -139,6 +157,7 @@ export class ChatDialogComponent implements OnInit ,OnDestroy{
   }
   ngOnDestroy(): void {
     this.messageListener.unsubscribe()
+    this.messagObject.unsubscribe()
   }
 
   sendMessage(message: any, userId: any) {

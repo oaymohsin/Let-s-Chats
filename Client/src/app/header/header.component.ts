@@ -110,14 +110,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       data: { user },
     });
+    const dialogSet=this.socketService.getdialogOpenSet()
+    dialogSet.add(user._id)
+    console.log(dialogSet)
 
     this.openedDialogList.push(user._id);
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog Result: ${result}`);
-      this.openedDialogList = this.openedDialogList.filter(
-        (id: any) => id !== user._id
-      );
+       dialogSet.delete(user._id)
+      console.log(`dialogset: ${dialogSet}`);
+
     });
 
     this.socketService.connectToUser(user._id);
