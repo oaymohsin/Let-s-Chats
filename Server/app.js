@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./Routes/userRoutes");
 const messageRoutes=require("./Routes/messageRoutes")
 const groupRoutes=require('./Routes/groupRoutes')
+require("dotenv/config");
 const app = express();
 app.use(cors());
 
@@ -23,6 +24,7 @@ mongoose
     console.log("conncected successfully");
   })
   .catch(() => {
+    // console.log(process.env.MONGO_ATLAS_PW)
     console.log("connection failed");
   });
 

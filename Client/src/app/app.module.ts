@@ -88,9 +88,9 @@ import { ConfirmDialogueComponent } from './confirm-dialogue/confirm-dialogue.co
   ],
   providers: [
   
-    MessageService,
+    // MessageService,
     
-    SocketService,
+    // SocketService,
     
     
     ConfirmationService,

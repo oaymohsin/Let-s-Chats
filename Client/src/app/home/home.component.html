@@ -1,11 +1,11 @@
-<div class="container-fluid">
+<div class="container-fluid d-flex">
     <!-- Left side container with slogan and button -->
     <div class="left-content d-flex flex-column align-items-center justify-content-center">
       <div class="chat-slogan">
         <strong>Connect through <span>Chat</span></strong>
         <p>More than messages. Build real connections.</p>
       </div>
-      <button class="btn btn-primary new-message-btn">New Message</button>
+      <button *ngIf="loginStatus" class="btn btn-primary new-message-btn" (click)="openFriendsList()">New Message</button>
     </div>
   
     <!-- Right side container with responsive illustration -->

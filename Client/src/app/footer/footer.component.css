@@ -26,3 +26,13 @@
   .footer-icons i:hover {
     color: #f8f9fa; /* Light gray color on hover */
   }
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    
+    background-color: #007bff; /* Blue footer color */
+    color: #ffffff; /* White text color */
+    padding: 20px 0;
+}

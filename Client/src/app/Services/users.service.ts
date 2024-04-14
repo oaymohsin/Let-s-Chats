@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { SocketService } from './socket.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationComponent } from '../notification/notification.component';
@@ -11,14 +11,23 @@ import { ConfirmDialogueComponent } from '../confirm-dialogue/confirm-dialogue.c
 @Injectable({
   providedIn: 'root',
 })
-export class UsersService {
+export class UsersService implements OnInit {
   private loginStatus = false;
   token: any = '';
   tokenTimer: any;
   loggedUserId: any;
   private confirmDialogResponse= new Subject<boolean> 
-  private authStatusListener = new Subject<boolean>();
+  // private authStatusListener = new Subject<boolean>();
+  private authStatusListener = new BehaviorSubject<boolean>(false);
   private loggedInUserId = new Subject<any>();
+  //for opening friends modal from different component
+  private isOpenSubject = new BehaviorSubject<boolean>(false);
+  isOpen$ = this.isOpenSubject.asObservable();
+  //DECODE TOKEN AND EXTRACT PAYLOAD
+  private tokenData= new BehaviorSubject<any>('');
+  TokenData = this.tokenData.asObservable()
+
+
   constructor(
     private HttpClient: HttpClient,
     private socketService: SocketService,
@@ -26,6 +35,21 @@ export class UsersService {
     private snackBar: MatSnackBar,
     private confirmDialog:MatDialog
   ) {}
+
+  ngOnInit(): void {
+      this.decodeToken()
+  }
+
+  openFriendsModal() {
+    this.isOpenSubject.next(true);
+  }
+
+  closeFriendsModal() {
+    this.isOpenSubject.next(false);
+  }
+
+
+
 
   getloginStatus() {
     return this.loginStatus;
@@ -75,6 +99,7 @@ export class UsersService {
         this.saveAuthData(this.token, expirationDate, response.userId);
         this.authStatusListener.next(true);
         this.socketService.connectToSocket();
+        this.decodeToken()
 
         this.alert('User Logged In successfully')
        
@@ -97,6 +122,7 @@ export class UsersService {
     this.authStatusListener.next(false);
     this.socketService.disconnectFromSocket();
     this.router.navigate(['../']);
+    this.tokenData.next(null)
   }
 
   private clearAuthData() {
@@ -178,5 +204,14 @@ export class UsersService {
       }
       confirmDialogRef.close()
     })
+  }
+  
+  decodeToken(){
+    const token = localStorage.getItem('token');
+    if (token) {
+      const tokenDecode = JSON.parse(atob(token.split('.')[1]));
+      console.log(tokenDecode)
+      this.tokenData.next(tokenDecode)
+    }
   }
 }

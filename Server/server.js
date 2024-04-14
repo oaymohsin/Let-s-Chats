@@ -2,6 +2,7 @@ const app = require("./app");
 const socketHandler= require('./socket')
 const http = require("http");
 const debug = require("debug")("node-angular");
+require('dotenv')
 
 // const server=http.createServer(app,()=>{
 //     console.log("app is listening on 3000 port")
@@ -47,7 +48,7 @@ const onListening = () => {
   debug("Listening on " + bind);
 };
 
-const port = normalizePort(process.env.PORT || "3050");
+const port = normalizePort(process.env.PORT || 3050);
 app.set("port", port);
 
 const server = http.createServer(app);

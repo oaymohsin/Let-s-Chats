@@ -147,9 +147,11 @@ export class SocketService implements OnInit, OnDestroy {
   
 
   disconnectFromSocket() {
-    // Disconnect from the Socket.IO server
-    this.socket.disconnect();
+    if (this.socket) {
+      this.socket.disconnect();
+    }
   }
+  
 
   connectToUser(userId: string): void {
     this.socket.emit('connectToUser', userId);

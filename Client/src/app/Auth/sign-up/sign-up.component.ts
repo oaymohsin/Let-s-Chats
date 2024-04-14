@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { UsersService } from 'src/app/Services/users.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { UsersService } from 'src/app/Services/users.service';
 export class SignUpComponent {
  @ViewChild('myform') myform!: ElementRef |any;
 
- constructor(private userService:UsersService){}
+ constructor(private userService:UsersService,private router:Router){}
 
   onSubmit(){
     const username=this.myform.form.value.username;
@@ -19,8 +20,11 @@ export class SignUpComponent {
     // console.log(this.myform.form.value)
 
     this.userService.createUser(username,email,password)
-    .subscribe((response)=>{
+    .subscribe((response:any)=>{
       console.log(response)
+      this.userService.alert(response.message)
+      this.myform.reset()
+      this.router.navigate(['/login'])
     })
   }
 }

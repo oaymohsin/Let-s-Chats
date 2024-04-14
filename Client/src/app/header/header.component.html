@@ -3,12 +3,12 @@
         <div class="container-fluid">
           <!-- Logo on the left corner -->
           <a class="navbar-brand" href="#">
-            <img src="" alt="Logo" width="30" height="30" class="d-inline-block align-top">
-            Your Chat App
+            <img src="/assets/messenger.png" alt="Logo" width="30" height="30" class="d-inline-block align-top">
+            
           </a>
     
           <!-- Slogan in the middle -->
-          <div class="navbar-text mx-auto">
+          <div class="navbar-text mx-auto ">
             <strong>Let's Chat</strong>
           </div>
     
@@ -19,9 +19,9 @@
     
           <!-- Right side buttons -->
           <div class="collapse navbar-collapse" id="navbarButtons">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto ">
               <li class="nav-item" *ngIf="loginStatus">
-                <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  (click)="fetchUsers()">Friends</button>
+                <button id="friendButton" #friendButton class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  (click)="fetchUsers()">Friends</button>
               </li>
               <li class="nav-item" *ngIf="loginStatus">
                 <button class="btn btn-outline-light nav-link" data-bs-toggle="modal" data-bs-target="#groupStaticBackdrop"  (click)="fetchGroups()">My Groups</button>
@@ -29,11 +29,11 @@
               <li class="nav-item" *ngIf="loginStatus">
                 <button class="btn btn-outline-light nav-link" routerLink="/create-group"  >Create Group</button>
               </li>
-              <li class="nav-item" *ngIf="loginStatus">
-                <button class="btn btn-outline-light nav-link" >Online</button>
+              <li class="nav-item d-flex text-white  fw-bolder" *ngIf="loginStatus">
+                <h3 class="m-0 p-0 align-self-center fw-bolder fs-5  text-uppercase">Hi! {{loggedInUserData.userName}}</h3>
               </li>
-              <li class="nav-item" *ngIf="loginStatus">
-                <button class="btn btn-outline-light nav-link" (click)="logOut()">LogOut</button>
+              <li class="nav-item mx-3" *ngIf="loginStatus">
+                <button class="btn btn-outline-light  rounded-5  nav-link" (click)="logOut()">Log Out</button>
               </li>
               <li class="nav-item" *ngIf="!loginStatus">
                 <button class="btn btn-outline-light nav-link " routerLink="/login">Login</button>
@@ -88,7 +88,7 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="falseButton()">Close</button>
         <button type="button" class="btn btn-primary">Understood</button>
       </div>
     </div>

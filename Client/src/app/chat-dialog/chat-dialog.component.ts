@@ -7,6 +7,7 @@ import {
 import { SocketService } from '../Services/socket.service';
 import { UsersService } from '../Services/users.service';
 import { Subscription } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-chat-dialog',
@@ -22,13 +23,14 @@ export class ChatDialogComponent implements OnInit ,OnDestroy{
   receivedMessages: any = [];
   private messageListener:Subscription |any;
   private messagObject:Subscription |any;
-
+  datePipe:DatePipe | any
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: any },
     private SocketService: SocketService,
     private matDialogRef: MatDialogRef<ChatDialogComponent>,
     private dialog: MatDialog,
-    private userService: UsersService
+    private userService: UsersService,
+    // datePipe:DatePipe
   ) {
     this.user = data.user;
     this.messagObject=this.SocketService.getmessageObject().subscribe((data:any)=>{
@@ -38,7 +40,7 @@ export class ChatDialogComponent implements OnInit ,OnDestroy{
       message: data.message,
       sender: data.sender,
       Time: data.time,
-      Date: data.date,
+      // Date: data.date,
     });
     })
    

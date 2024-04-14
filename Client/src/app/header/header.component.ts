@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { UsersService } from '../Services/users.service';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,6 +20,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  @ViewChild('friendButton') friendButtonRef: ElementRef | any;
+
   loginStatus: any = false;
   private confirmDialogSubs: Subscription | any;
   private authListenerSubs: Subscription | any;
@@ -21,20 +30,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
   openedGroupDialogList: any = [];
   myGroups: any = [];
   myId: any;
+  clickFriendButton: boolean = false;
+  loggedInUserData:any;
   constructor(
     private userService: UsersService,
     private dialog: MatDialog,
-    private socketService: SocketService //  private confirmationService:ConfirmationService ,
-  ) //  private messageService:MessageService
-  {}
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
+    private socketService: SocketService //  private confirmationService:ConfirmationService , //  private messageService:MessageService
+  ) {}
 
   ngOnInit(): void {
     // console.log(this.userService.getloginStatus())
 
+    this.userService.isOpen$.subscribe((friendmodal) => {
+      this.clickFriendButton = friendmodal;
+      console.log(`check the clickfrien button ${this.clickFriendButton}`);
+      if (this.clickFriendButton) {
+        const friendButton =
+          this.elementRef.nativeElement.querySelector('#friendButton');
 
-    
-
-
+        const nativeElement = this.friendButtonRef.nativeElement;
+        nativeElement.click();
+      }
+    });
 
     // this.fetchGroups()
     // this.fetchUsers()
@@ -55,6 +74,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     //   this.loginStatus=true
     // }
     // console.log(this.loginStatus);
+      this.userService.decodeToken()
+    this.userService.TokenData.subscribe((tokenData)=>{
+      console.log(tokenData)
+      this.loggedInUserData=tokenData
+    })
+    
   }
 
   //   confirm1(event: Event) {
@@ -110,16 +135,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       data: { user },
     });
-    const dialogSet=this.socketService.getdialogOpenSet()
-    dialogSet.add(user._id)
-    console.log(dialogSet)
+    const dialogSet = this.socketService.getdialogOpenSet();
+    dialogSet.add(user._id);
+    console.log(dialogSet);
 
     this.openedDialogList.push(user._id);
 
     dialogRef.afterClosed().subscribe((result) => {
-       dialogSet.delete(user._id)
+      dialogSet.delete(user._id);
       console.log(`dialogset: ${dialogSet}`);
-
     });
 
     this.socketService.connectToUser(user._id);
@@ -185,7 +209,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             console.log(data);
             if (data.result == true) {
               this.userService.alert(data.message);
-              this.fetchGroups()
+              this.fetchGroups();
             }
           });
         }
@@ -207,13 +231,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.socketService
             .leaveGroup(groupId, userId)
             .subscribe((data: any) => {
-              this.fetchGroups()
+              this.fetchGroups();
               console.log(data);
               this.userService.alert(data.message);
-              
-
             });
         }
       });
+  }
+
+  falseButton(){
+    this.userService.closeFriendsModal()
   }
 }
